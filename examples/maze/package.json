@@ -1,0 +1,9 @@
+{
+  "name": "maze",
+  "version": "1.0.0",
+  "description": "",
+  "title": "Maze",
+  "scripts": {
+    "start": "node ../../node_modules/coffeescript/bin/coffee ../../runner.coffee 5330"
+  }
+}

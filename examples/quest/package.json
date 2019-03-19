@@ -1,0 +1,10 @@
+{
+  "name": "quest",
+  "version": "1.0.0",
+  "description": "",
+  "title": "Квест",
+  "startScene": "first",
+  "scripts": {
+    "start": "node ../../node_modules/coffeescript/bin/coffee ../../runner.coffee 5310"
+  }
+}

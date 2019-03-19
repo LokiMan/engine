@@ -1,0 +1,21 @@
+{
+  "name": "dev-server",
+  "version": "1.0.0",
+  "description": "Dev-server",
+  "devDependencies": {
+    "@babel/plugin-proposal-object-rest-spread": "7.3.2",
+    "@babel/preset-env": "7.3.1",
+    "babel-core": "6.26.3",
+    "babel-plugin-transform-es2015-destructuring": "6.23.0",
+    "chokidar": "2.1.1",
+    "coffeescript": "2.3.2",
+    "commander": "2.19.0",
+    "concat-with-sourcemaps": "1.1.0",
+    "http-proxy": "1.17.0",
+    "preprocess": "3.1.0",
+    "st": "1.2.2",
+    "uglify-js": "3.4.9",
+    "ws": "1.1.1"
+  },
+  "private": true
+}
