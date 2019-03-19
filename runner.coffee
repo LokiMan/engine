@@ -57,7 +57,7 @@ server = http.createServer()
 
 webSocketServer = new ws.Server {server}
 
-server.listen worldPort, ->
+server.listen worldPort, 'localhost', ->
   logger.info "#{title} running at http://localhost:#{gamePort}/"
 
 engineDir = __dirname
