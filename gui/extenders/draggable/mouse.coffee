@@ -17,6 +17,8 @@ MouseDraggable = (document, userSelect)->
     mouseDown = (e)->
       return if e.button isnt 0
 
+      e.preventDefault?()
+
       startX = e.clientX
       startY = e.clientY
 
