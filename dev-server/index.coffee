@@ -143,10 +143,8 @@ Game {
       if url[-3..-1] is '.js'
         if url[1..3] is 'js/'
           name = url['/js/'.length...-'.js'.length]
-        else if url.indexOf('/src/') isnt -1
-          name = '../..' + url[0 ... -'.js'.length]
         else
-          name = '..' + url[0 ... -'.js'.length]
+          name = '../..' + url[0 ... -'.js'.length]
 
         if (packer = packers[name])?
           res.setHeader 'Content-Type', 'application/javascript'

@@ -53,8 +53,10 @@ Production = (engineDir, rootDir, entry)->
 
     loadSource source, pathToFile, currentPath
 
-  source = fileReader.read pathFS.join __dirname, '../../gui/index'
-  guiFile = loadSource source, 'gui', engineDir + '/gui/'
+  pathToGuiIndex = pathFS.join __dirname, '../../gui/index'
+  source = fileReader.read pathToGuiIndex
+  relativePathToGuiIndex = pathFS.relative rootDir, pathToGuiIndex
+  guiFile = loadSource source, relativePathToGuiIndex, engineDir + '/gui/'
 
   if entry.source?
     loadSource entry.source, entry.path, rootDir
