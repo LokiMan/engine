@@ -15,6 +15,9 @@ RepositoryFactory = (storage, onChange, Observer)-> (collection, Class)->
     else
       return null
 
+  has = (uid)->
+    cache[uid]? or storage.has [collection, uid]
+
   _create = (uid, data)->
     observableData = Observer data, onChange, [collection, uid]
 
@@ -32,6 +35,6 @@ RepositoryFactory = (storage, onChange, Observer)-> (collection, Class)->
     storage.del [collection, uid]
     delete cache[uid]
 
-  {get, add, remove}
+  {get, add, remove, has}
 
 module.exports = RepositoryFactory
