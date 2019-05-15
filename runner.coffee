@@ -38,7 +38,6 @@ gameFile = process.env['npm_package_main'] ? 'game'
 startScene = process.env['npm_package_startScene'] ? 'start'
 
 srcDir = path.join gameDir, './src/'
-depComponents = packageJson.components ? {}
 
 players = null
 remotes = new Map
