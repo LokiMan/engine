@@ -34,13 +34,13 @@ Persist = (dataDir, fs = require 'fs')->
 
   try
     for line, i in lines
-      command = JSON.parse line
-      if Array.isArray command[0]
-        for [cmd, path, args...] in command
-          storage[cmd] path, args...
-      else
-        [cmd, path, args...] = command
+      commands = JSON.parse line
+      length = commands.length
+      cmdNum = 1 #skip first element - writeNum
+      while cmdNum < length
+        [cmd, path, args...] = commands[cmdNum]
         storage[cmd] path, args...
+        cmdNum++
   catch e
     console.log e
     throw new Error "On parse changes on line #{i}:#{line}"
@@ -50,6 +50,7 @@ Persist = (dataDir, fs = require 'fs')->
   changesStream = fs.createWriteStream pathChanges, flags: 'w'
 
   buffer = []
+  writeNum = 0
 
   onChange = ->
     if buffer.length is 0
@@ -69,11 +70,9 @@ Persist = (dataDir, fs = require 'fs')->
     return "[#{line.join(',')}]"
 
   writeBuffer = ->
-    if buffer.length is 1
-      changesStream.write buffer[0] + '\n'
-    else
-      changesStream.write "[#{buffer.join(',')}]\n"
+    changesStream.write "[#{writeNum},#{buffer.join(',')}]\n"
     buffer.length = 0
+    writeNum++
 
   return Storage gameData, onChange
 
