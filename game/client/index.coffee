@@ -11,7 +11,7 @@ scene = {}
 gameComponents = {}
 
 gameContainerGuiElement = gui.GuiElement document.body.firstElementChild
-gui.gameContainer = GameContainer gameContainerGuiElement
+gui.gameContainer = GameContainer gameContainerGuiElement, gui.isStandalone
 
 sceneContainer = SceneContainer scene, gameComponents
 gui.sceneContainer = sceneContainer
