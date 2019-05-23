@@ -9,7 +9,9 @@ initComponents = (constructors, components, remote, info, scene, gui)->
         remote: remote.makeFor name
       }
 
-      components[name] = constructors[name] value, arg
+      component = constructors[name] value, arg
+      components[name] = component
+      component.container = container
 
   console.info 'game:', info.reduce ((res, [name, value])-> res[name] = value; res), {}
 
