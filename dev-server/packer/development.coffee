@@ -69,7 +69,7 @@ Development = (engineDir, rootDir, entry)->
     if guiRegexp.test compiled
       throw new Error "#{pathToFile}.coffee includes gui override: #{compiled.match guiRegexp}"
 
-    file.compiled = "module = _modules_['#{index}'] = {exports: {}}; (function(require, module, exports) {\n\n" + compiled +
+    file.compiled = "var module = _modules_['#{index}'] = {exports: {}}; (function(require, module, exports) {\n\n" + compiled +
       "\n}).call(module.exports, _require_, module, module.exports);"
 
     return file
@@ -83,7 +83,7 @@ Development = (engineDir, rootDir, entry)->
   guiFile = addSource 'gui', engineDir + '/gui/', source
 
   preludeGui = "
-gui = _require_(#{guiFile.index}); ({#{guiNames.join(',')}} = gui);"
+gui = _require_(#{guiFile.index}); var {#{guiNames.join(',')}} = gui;"
 
   files.set 'guiGlobal', {compiled: preludeGui}
 
@@ -133,7 +133,8 @@ gui = _require_(#{guiFile.index}); ({#{guiNames.join(',')}} = gui);"
         concat.add file.path + '.js', file.compiled
         inserted.add file.path
 
-      built = '(function() {' + concat.content.toString() + '}).call(this);'
+      built = '(function() {"use strict";\n' +
+        concat.content.toString() + '}).call(this);'
 
       base64 = Buffer.from(concat.sourceMap).toString('base64')
 
