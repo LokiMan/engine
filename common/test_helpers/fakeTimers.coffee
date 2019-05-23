@@ -14,8 +14,11 @@ FakeTimers = ->
     return {
       clear: ->
         timers.splice (timers.indexOf timer), 1
-      reStart: ->
-        timers.push timer
+      reStart: (newMS = timer.ms)->
+        @clear()
+        timers.push {
+          ms: newMS + time, func: timer.func, interval: timer.interval
+        }
     }
 
   tick = (ms)->

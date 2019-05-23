@@ -78,6 +78,14 @@ describe "Fake timers", ->
     timers.tick 1
     expect(func.calls.length).to.equal 2
 
+  it 'should restart to new time if it set', ->
+    timer = timers.interval 3, func
+    timers.tick 3
+    expect(func.calls.length).to.equal 1
+    timer.reStart 10
+    timers.tick 10
+    expect(func.calls.length).to.equal 2
+
   it "should return current time on now()", ->
     result = timers.now()
     expect(result).to.equal 0

@@ -21,11 +21,11 @@ Timers =
       w.clearTimeout timer
       timer = null
 
-    reStart = ->
+    reStart = (newMS = ms)->
       if timer?
         clear()
 
-      timer = w.setTimeout func, ms
+      timer = w.setTimeout func, newMS
 
     return {clear, reStart}
 
@@ -36,11 +36,11 @@ Timers =
       w.clearInterval timer
       timer = null
 
-    reStart = ->
+    reStart = (newMS = ms)->
       if timer?
         clear()
 
-      timer = w.setInterval func, ms
+      timer = w.setInterval func, newMS
 
     return {clear, reStart}
 
