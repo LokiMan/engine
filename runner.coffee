@@ -27,7 +27,7 @@ Cron = require './runner/cron'
 
 gameDir = process.cwd()
 gamePort = process.argv[2]
-worldPort = gamePort + 1
+worldPort = Number(gamePort) + 1
 
 packageJson = require path.join gameDir, './package.json'
 
