@@ -12,7 +12,11 @@ TryingWebSocket = (
     return polling.connect()
 
   try
-    socket = new Constructor "ws://#{w.location.host}/"
+    protocol = 'ws'
+    if location.protocol is 'https:'
+      protocol += 's'
+
+    socket = new Constructor "#{protocol}://#{w.location.host}/"
   catch
     return polling.connect()
 
