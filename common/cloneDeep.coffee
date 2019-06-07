@@ -13,7 +13,7 @@ cloneDeep = (obj, options = {})->
     flags += 'y' if obj.sticky
     return new RegExp obj.source, flags
 
-  newInstance = new obj.constructor()
+  newInstance = new (obj.constructor ? Object)()
 
   for key, value of obj
     if typeof value isnt 'function' or options.functions
