@@ -133,7 +133,7 @@ gui = _require_(#{guiFile.index}); var {#{guiNames.join(',')}} = gui;"
         concat.add file.path + '.js', file.compiled
         inserted.add file.path
 
-      built = '(function() {"use strict";\n' +
+      built = '(function() {"use strict"; ' +
         concat.content.toString() + '}).call(this);'
 
       base64 = Buffer.from(concat.sourceMap).toString('base64')
