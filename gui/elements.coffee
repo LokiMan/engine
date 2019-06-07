@@ -10,6 +10,12 @@ Elements = (create)->
   div: (props, next)->
     create 'div', props, next
 
+  ul: (props, next)->
+    create 'ul', props, next
+
+  li: (props, next)->
+    create 'li', props, next
+
   img: (props)->
     create 'img', props
 
@@ -36,6 +42,19 @@ Elements = (create)->
       value: ''
     }, props
 
+  radio: (props)->
+    create 'input', mergeDeep {
+      type: 'radio'
+    }, props
+
+  label: (props, next)->
+    create 'label', props, next
+
+  hidden: (props)->
+    create 'input', mergeDeep {
+      type: 'hidden'
+    }, props
+
   button: (props)->
     create 'button', props
 
@@ -44,12 +63,21 @@ Elements = (create)->
       next = props
       props = {}
 
-    create 'form', mergeDeep({method: 'POST'}, props), next
+    create 'form', mergeDeep({method: 'POST', submit: true}, props), next
 
   submit: (props)->
     create 'input', mergeDeep {
       type: 'submit'
     }, props
+
+  iframe: (props, next)->
+    create 'iframe', props, next
+
+  select: (props, next)->
+    create 'select', props, next
+
+  option: (props)->
+    create 'option', props
 
   center: (props, next)->
     create 'center', props, next

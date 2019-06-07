@@ -14,7 +14,7 @@ Pos = ({style}, pos, guiElement)->
       style.width = width + if typeof width is 'number' then 'px' else ''
       style.height = height + if typeof height is 'number' then 'px' else ''
     else
-      pos = [guiElement.pos...]
+      pos = (c for c in guiElement.pos)
       pos[0] = left
       pos[1] = top
 

@@ -26,9 +26,11 @@ module.exports = (isTouch, document)->
     value: require './value'
     draggable: if isTouch then TouchDraggable else MouseDraggable
     scrollTop: require './scrollTop'
+    offsetRect: require './offsetRect'
     smoothVerticalScrolling: require './smoothVerticalScrolling'
     zIndex: require './zIndex'
     insertBefore: require './insertBefore'
+    submit: require './_internal/submit'
 
   if not isTouch
     extenders.mouseOver = require './mouseOver'
