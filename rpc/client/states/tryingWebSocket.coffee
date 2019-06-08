@@ -13,7 +13,7 @@ TryingWebSocket = (
 
   try
     protocol = 'ws'
-    if location.protocol is 'https:'
+    if w.location.protocol is 'https:'
       protocol += 's'
 
     socket = new Constructor "#{protocol}://#{w.location.host}/"
