@@ -15,7 +15,9 @@ if NODE_ENV in ['production', 'test']
   hashJsonText = require('fs').readFileSync path, {encoding: 'utf8'}
   hashJson = JSON.parse hashJsonText
 
-GamePage = ({title, entries, bodyStyle = defaultBodyStyle, container, meta})->
+GamePage = (
+  {title, entries, bodyStyle = defaultBodyStyle, container, meta, metas}
+)->
   scriptLine = ''
 
   scripts = []
@@ -30,6 +32,11 @@ GamePage = ({title, entries, bodyStyle = defaultBodyStyle, container, meta})->
 
   containerStyle = if container? then " style=\"#{container}\"" else ''
 
+  metasLines = ''
+  if metas?
+    for metaName, metaValue of metas
+      metasLines += "\n    <meta name=\"#{metaName}\" content=\"#{metaValue}\">"
+
   beforeTitle = """
 <!DOCTYPE html>
 <html style='height: 100%'>
@@ -39,7 +46,7 @@ GamePage = ({title, entries, bodyStyle = defaultBodyStyle, container, meta})->
 """
 
   afterTitle = """
-#{title}</title>
+#{title}</title>#{metasLines}
     <link rel='shortcut icon' href='/res/img/favicon.ico'>
     <link rel="apple-touch-icon" href='/res/img/favicon.ico'>\
 #{if meta then metaLines else ''}
