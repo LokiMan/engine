@@ -10,8 +10,7 @@ Observer = (root, onChange, rootPath = [])->
 
     if not (cache = proxyCache[pathStr])?
       cache = proxyCache[pathStr] = {}
-
-    if cache.target is target
+    else if cache.target is target
       return cache.proxy
 
     handler =
