@@ -1,6 +1,6 @@
 Arrow = (remote)-> ([x, y], name)->
   img
-    src: "/res/img/arrow_#{name}.png"
+    src: "arrow_#{name}.png"
     pos: [x, y, 128, 128]
     visible: true
     style:

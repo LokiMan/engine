@@ -32,9 +32,17 @@ Persist = (dataDir, fs = require 'fs')->
   if lines[lines.length - 1].length == 0
     lines.pop()
 
+  prevNum = -1
+
   try
     for line, i in lines
       commands = JSON.parse line
+
+      currentNum = commands[0]
+      if currentNum isnt prevNum + 1
+        throw new Error 'On parse changes wrong numbering.'
+      prevNum = currentNum
+
       length = commands.length
       cmdNum = 1 #skip first element - writeNum
       while cmdNum < length

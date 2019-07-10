@@ -10,6 +10,7 @@ styleExtenders =
   gray: require './style/gray'
   transform: require './style/transform'
   userSelect: userSelect
+  backgroundImage: require './style/backgroundImage'
 
 module.exports = (isTouch, document)->
   MouseDraggable = MouseDraggableFactory document, userSelect

@@ -108,6 +108,7 @@ Production = (engineDir, rootDir, entry)->
     transpile: {
       presets: ['env']
       plugins: ['transform-es2015-destructuring', 'transform-object-rest-spread']
+      compact: true
     }
   }
   UglifyJS.minify(str, {compress: drop_console: true}).code

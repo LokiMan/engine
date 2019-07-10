@@ -17,6 +17,9 @@ Elements = (create)->
     create 'li', props, next
 
   img: (props)->
+    if props.src?
+      props.src = '/res/img/' + props.src
+
     create 'img', props
 
   a: (props)->

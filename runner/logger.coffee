@@ -22,7 +22,7 @@ Logger = ->
 
 _time = ->
   d = dates.nowDate()
-  date = "#{pad(d.getFullYear())}/#{pad(d.getDate())}/#{pad(d.getMonth() + 1)}"
+  date = "#{pad(d.getDate())}/#{pad(d.getMonth() + 1)}/#{pad(d.getFullYear())}"
   time = "#{pad(d.getHours())}:#{pad(d.getMinutes())}:#{pad(d.getSeconds())}"
 
   return "#{date}, #{time}"
