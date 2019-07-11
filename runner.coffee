@@ -81,7 +81,9 @@ startGame = (logger)->
 
   {
     gameComponents, scenes, componentsConstructors
-  } = loadGame {srcDir, gameFile, load: require}
+  } = loadGame {
+    srcDir, gameFile, components: packageJson.components, load: require
+  }
 
   if NODE_ENV in ['production', 'test']
     checkAndSkipDebug gameComponents

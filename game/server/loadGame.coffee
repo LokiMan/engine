@@ -1,6 +1,9 @@
 coffee = require 'coffeescript'
+path = require 'path'
 
-loadGame = ({srcDir, gameFile, fs = require('fs'), load = (-> {})})->
+loadGame = (
+  {srcDir, gameFile, components = {}, fs = require('fs'), load = (->{})}
+)->
   gameComponents = {}
   scenes = {}
   componentsConstructors = {}
@@ -8,7 +11,12 @@ loadGame = ({srcDir, gameFile, fs = require('fs'), load = (-> {})})->
   loadComponentConstructor = (name)->
     return if componentsConstructors[name]?
 
-    pathTo = "#{srcDir}#{name}"
+    dir = if (relPath = components[name])?
+      path.join (srcDir + '../'), (relPath + '/')
+    else
+      srcDir
+
+    pathTo = "#{dir}#{name}"
 
     pathToServer = "#{pathTo}/server/#{name}"
     if fs.existsSync pathToServer + '.coffee'
@@ -33,16 +41,16 @@ loadGame = ({srcDir, gameFile, fs = require('fs'), load = (-> {})})->
       gameComponents[name] = value
     return
 
-  scene = (id, components)->
+  scene = (id, sceneComponents)->
     sceneID = id
 
     if scenes[sceneID]?
       throw new Error "Duplicated scene id = #{sceneID}"
 
-    for name, value of components
+    for name, value of sceneComponents
       loadComponentConstructor name
 
-    scenes[sceneID] = components
+    scenes[sceneID] = sceneComponents
 
   sandbox =
     components: loadGameComponents

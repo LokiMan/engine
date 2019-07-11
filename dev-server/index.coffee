@@ -29,7 +29,8 @@ DevServer = (
     componentsRequires = []
     for name, component of constructors when not component.isServerOnly
       relPath = path.relative srcDir, component.pathTo
-      componentsRequires.push "  #{name}: require './#{relPath}/client/#{name}'"
+      reqPath = if relPath[0] is '.' then relPath else "./#{relPath}"
+      componentsRequires.push "  #{name}: require '#{reqPath}/client/#{name}'"
 
     packers.game.setEntry 'game', srcDir, """
 require('game/client/index') {

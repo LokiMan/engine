@@ -14,7 +14,11 @@ gameFile = process.env['npm_package_main'] ? 'game'
 
 srcDir = path.join gameDir, './src/'
 
-{componentsConstructors} = loadGame {srcDir, gameFile, fs}
+{
+  componentsConstructors
+} = loadGame {
+  srcDir, gameFile, components: packageJson.components, fs
+}
 
 componentsRequires = []
 isNeed = (name, component)->
@@ -22,7 +26,8 @@ isNeed = (name, component)->
 
 for name, component of componentsConstructors when isNeed name, component
   relPath = path.relative gameDir, component.pathTo
-  componentsRequires.push "  #{name}: require './#{relPath}/client/#{name}'"
+  reqPath = if relPath[0] is '.' then relPath else "./#{relPath}"
+  componentsRequires.push "  #{name}: require '#{reqPath}/client/#{name}'"
 
 source = """
 require('game/client/index') {
