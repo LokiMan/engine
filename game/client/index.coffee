@@ -21,7 +21,7 @@ gui.animate = animate
 
 Game = (componentsConstructors)->
   remote = Remote Connection(), ({target, action, args})->
-    (scene[target] ? gameComponents[target])?[action]? args...
+    (scene[target]?[action] ? gameComponents[target]?[action])? args...
 
   initGame = ([componentsInfo, sceneInfo])->
     initComponents componentsConstructors, gameComponents,
