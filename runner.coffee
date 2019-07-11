@@ -78,7 +78,7 @@ startGame = (logger)->
   expires = Number process.env['npm_package_uidGenerator_expires']
   auth = UIDGenerator playersCollection, router, title, cookieName, expires
 
-  {gameComponents, scenes, includes} = loadGame dir: srcDir, file: gameFile
+  {gameComponents, scenes} = loadGame {srcDir, gameFile}
 
   if NODE_ENV in ['production', 'test']
     checkAndSkipDebug gameComponents
@@ -98,14 +98,14 @@ startGame = (logger)->
 
   server.on 'request', router
 
-  {gameComponents, scenesComponents, includes, components, players, router, hb}
+  {gameComponents, scenesComponents, components, players, router, hb}
 
 checkAndSkipDebug = (components)->
   for name in Object.keys(components)
     if name.startsWith '_debug_'
       delete components[name]
 
-{gameComponents, scenesComponents, includes, router, hb} = startGame logger
+{gameComponents, scenesComponents, router, hb} = startGame logger
 
 process.on 'uncaughtException', logger.exception
 
@@ -113,7 +113,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
   DevServer = require './dev-server/index'
 
   devServer = DevServer engineDir, {
-    gamePort, gameFile, worldPort, gameComponents, scenesComponents, includes
+    gamePort, gameFile, worldPort, gameComponents, scenesComponents
   }, ->
     cron.reStart()
 
@@ -127,7 +127,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
     process.on 'uncaughtException', logger.exception
 
     {
-      gameComponents, scenesComponents, includes, components, players, router,
+      gameComponents, scenesComponents, components, players, router,
       hb
     } = startGame logger
 
@@ -141,7 +141,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
 
       prevCall.call components, player, functionName, args...
 
-    {gameComponents, scenesComponents, includes}
+    {gameComponents, scenesComponents}
 
   if packageJson.build?
     for name, entry of packageJson.build

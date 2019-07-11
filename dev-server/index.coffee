@@ -10,7 +10,7 @@ Development = require './packer/development'
 
 DevServer = (
   engineDir
-  {gamePort, gameFile, worldPort, gameComponents, scenesComponents, includes}
+  {gamePort, gameFile, worldPort, gameComponents, scenesComponents}
   reStartGame
 )->
   gameDir = process.cwd()
@@ -25,7 +25,7 @@ DevServer = (
 
   serverInError = ''
 
-  setEntry = ({gameComponents, scenesComponents, includes})->
+  setEntry = ({gameComponents, scenesComponents})->
     generateScenesComponentsRequires = ->
       result = []
       for name, componentConstructor of scenesComponents
@@ -53,7 +53,7 @@ Game {
 }
   """
 
-  setEntry {gameComponents, scenesComponents, includes}
+  setEntry {gameComponents, scenesComponents}
 
   reloadGame = ->
     try
@@ -75,7 +75,7 @@ Game {
 
       pathName = filePath[... -'.coffee'.length]
 
-      if pathName is gameFile or includes.includes pathName
+      if pathName is gameFile
         found = true
         needGameReload = true
         {clients} = packers.game

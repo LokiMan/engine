@@ -4,7 +4,7 @@ describe 'Read Game', ->
   loadGame = require '../../../game/server/loadGame'
 
   readGame = (content)->
-    loadGame dir: '', file: '', readFile: -> content
+    loadGame readFile: -> content
 
   it 'should read game components if they set', ->
     result = readGame """
@@ -47,30 +47,3 @@ scene 'first',
   cmp1: true
 """
     expect(fn).to.throw 'Duplicated scene'
-
-  it 'should read included scenes', ->
-    content = [
-      """
-scene 'first',
-  cmp1: true
-scene 'second',
-  cmp1: true
-
-include 'dir'
-""",
-      """
-scene 'third',
-  cmp2: true
-"""
-    ]
-
-    readFile = ->
-      content.shift()
-
-    {scenes} = loadGame {dir: 'path/', file: 'file', readFile}
-
-    expect(scenes).to.eql {
-      first: {cmp1: true} #, dir: 'path/'
-      second: {cmp1: true} #, dir: 'path/'
-      'dir/third': {cmp2: true} #, dir: 'path/dir/'
-    }

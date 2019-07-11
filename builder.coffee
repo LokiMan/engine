@@ -14,7 +14,7 @@ gameFile = process.env['npm_package_main'] ? 'game'
 
 srcDir = path.join gameDir, './src/'
 
-{gameComponents, scenes} = loadGame dir: srcDir, file: gameFile
+{gameComponents, scenes} = loadGame {srcDir, gameFile}
 
 gameComponentsRequires = []
 for name, component of gameComponents
