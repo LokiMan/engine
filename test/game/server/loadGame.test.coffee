@@ -4,7 +4,11 @@ describe 'Read Game', ->
   loadGame = require '../../../game/server/loadGame'
 
   readGame = (content)->
-    loadGame readFile: -> content
+    fakeFS =
+      readFileSync: -> content
+      existsSync: -> true
+
+    loadGame fs: fakeFS
 
   it 'should read game components if they set', ->
     result = readGame """

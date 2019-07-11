@@ -19,15 +19,15 @@ gui.sceneContainer = sceneContainer
 animate = Animate()
 gui.animate = animate
 
-Game = (scenesComponentsConstructors, gameComponentsConstructors)->
+Game = (componentsConstructors)->
   remote = Remote Connection(), ({target, action, args})->
     (scene[target] ? gameComponents[target])?[action]? args...
 
   initGame = ([componentsInfo, sceneInfo])->
-    initComponents gameComponentsConstructors, gameComponents,
+    initComponents componentsConstructors, gameComponents,
       remote, componentsInfo, scene, gui
 
-    updateScene = UpdateScene scenesComponentsConstructors, scene, remote,
+    updateScene = UpdateScene componentsConstructors, scene, remote,
       sceneContainer, gameComponents, animate, gui
 
     updateScene sceneInfo

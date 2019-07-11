@@ -10,7 +10,7 @@ Development = require './packer/development'
 
 DevServer = (
   engineDir
-  {gamePort, gameFile, worldPort, gameComponents, scenesComponents}
+  {gamePort, gameFile, worldPort, componentsConstructors}
   reStartGame
 )->
   gameDir = process.cwd()
@@ -25,35 +25,19 @@ DevServer = (
 
   serverInError = ''
 
-  setEntry = ({gameComponents, scenesComponents})->
-    generateScenesComponentsRequires = ->
-      result = []
-      for name, componentConstructor of scenesComponents
-        if not componentConstructor.isServerOnly
-          pathTo = path.relative srcDir, componentConstructor.pathTo
-          result.push "  #{name}: require './#{pathTo}/client/#{name}'"
-
-      return result.join '\n'
-
-    generateGameComponentsRequires = ->
-      result = []
-      for name, component of gameComponents when component.toClient?
-        pathTo = path.relative srcDir, component.pathTo
-        result.push "  #{name}: require './#{pathTo}/client/#{name}'"
-
-      return result.join '\n'
+  setEntry = (constructors)->
+    componentsRequires = []
+    for name, component of constructors when not component.isServerOnly
+      relPath = path.relative srcDir, component.pathTo
+      componentsRequires.push "  #{name}: require './#{relPath}/client/#{name}'"
 
     packers.game.setEntry 'game', srcDir, """
-Game = require 'game/client'
-
-Game {
-#{generateScenesComponentsRequires()}
-}, {
-#{generateGameComponentsRequires()}
+require('game/client/index') {
+#{componentsRequires.join '\n'}
 }
   """
 
-  setEntry {gameComponents, scenesComponents}
+  setEntry componentsConstructors
 
   reloadGame = ->
     try

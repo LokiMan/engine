@@ -1,5 +1,5 @@
 UpdateScene = (
-  scenesComponentsConstructors, scene, remote, sceneContainer, gameComponents,
+  componentsConstructors, scene, remote, sceneContainer, gameComponents,
   animate, gui
 )->
   componentsContainers = {}
@@ -20,7 +20,7 @@ UpdateScene = (
             gui
             remote: remote.makeFor name
           }
-          component = scenesComponentsConstructors[name] value, arg
+          component = componentsConstructors[name] value, arg
           component.container = container
 
           scene[name] = component
