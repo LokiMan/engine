@@ -14,33 +14,21 @@ gameFile = process.env['npm_package_main'] ? 'game'
 
 srcDir = path.join gameDir, './src/'
 
-{gameComponents, scenes} = loadGame dir: srcDir, file: gameFile
+{componentsConstructors} = loadGame {srcDir, gameFile, fs}
 
-gameComponentsRequires = []
-for name, component of gameComponents
-  reqPath = "./src/#{name}/client/#{name}"
-  if fs.existsSync path.join gameDir, "#{reqPath}.coffee"
-    gameComponentsRequires.push "  #{name}: require '#{reqPath}'"
+componentsRequires = []
+isNeed = (name, component)->
+  (not name.startsWith '_debug_') and (not component.isServerOnly)
 
-scenesComponents = {}
-scenesComponentsRequires = []
-for id, scene of scenes
-  for name, value of scene
-    if not scenesComponents[name]?
-      reqPath = "./src/#{name}/client/#{name}"
-      if fs.existsSync path.join gameDir, "#{reqPath}.coffee"
-        scenesComponentsRequires.push "  #{name}: require '#{reqPath}'"
-      scenesComponents[name] = true
+for name, component of componentsConstructors when isNeed name, component
+  relPath = path.relative gameDir, component.pathTo
+  componentsRequires.push "  #{name}: require './#{relPath}/client/#{name}'"
 
 source = """
-Game = require 'game/client/index'
-
-Game {
-#{scenesComponentsRequires.join '\n'}
-}, {
-#{gameComponentsRequires.join '\n'}
+require('game/client/index') {
+#{componentsRequires.join '\n'}
 }
-  """
+"""
 
 hashJson = {}
 
