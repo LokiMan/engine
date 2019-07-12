@@ -10,7 +10,7 @@ Development = require './packer/development'
 
 DevServer = (
   engineDir
-  {gamePort, gameFile, worldPort, componentsConstructors}
+  {gamePort, gameFile, worldPort, requiresSource}
   reStartGame
 )->
   gameDir = process.cwd()
@@ -25,20 +25,10 @@ DevServer = (
 
   serverInError = ''
 
-  setEntry = (constructors)->
-    componentsRequires = []
-    for name, component of constructors when not component.isServerOnly
-      relPath = path.relative srcDir, component.pathTo
-      reqPath = if relPath[0] is '.' then relPath else "./#{relPath}"
-      componentsRequires.push "  #{name}: require '#{reqPath}/client/#{name}'"
+  setEntry = (source)->
+    packers.game.setEntry 'game', srcDir, source
 
-    packers.game.setEntry 'game', srcDir, """
-require('game/client/index') {
-#{componentsRequires.join '\n'}
-}
-  """
-
-  setEntry componentsConstructors
+  setEntry requiresSource
 
   reloadGame = ->
     try

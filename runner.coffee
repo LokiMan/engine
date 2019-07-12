@@ -80,7 +80,7 @@ startGame = (logger)->
   auth = UIDGenerator playersCollection, router, title, cookieName, expires
 
   {
-    gameComponents, scenes, componentsConstructors
+    gameComponents, scenes, componentsConstructors, requiresSource
   } = loadGame {
     srcDir, gameFile, components: packageJson.components, load: require
     env: NODE_ENV
@@ -104,9 +104,9 @@ startGame = (logger)->
 
   server.on 'request', router
 
-  {componentsConstructors, components, players, router, hb}
+  {requiresSource, components, players, router, hb}
 
-{componentsConstructors, router, hb} = startGame logger
+{requiresSource, router, hb} = startGame logger
 
 process.on 'uncaughtException', logger.exception
 
@@ -114,7 +114,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
   DevServer = require './dev-server/index'
 
   devServer = DevServer engineDir, {
-    gamePort, gameFile, worldPort, componentsConstructors
+    gamePort, gameFile, worldPort, requiresSource
   }, ->
     cron.reStart()
 
@@ -128,7 +128,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
     process.on 'uncaughtException', logger.exception
 
     {
-      componentsConstructors, components, players, router, hb
+      requiresSource, components, players, router, hb
     } = startGame logger
 
     prevCall = components.callSceneComponents
@@ -141,7 +141,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
 
       prevCall.call components, player, functionName, args...
 
-    componentsConstructors
+    requiresSource
 
   if packageJson.build?
     for name, entry of packageJson.build

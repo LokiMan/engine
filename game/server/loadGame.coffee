@@ -6,7 +6,9 @@ loadGame = (
 )->
   gameComponents = {}
   scenes = {}
+
   componentsConstructors = {}
+  componentsRequires = []
 
   loadComponentConstructor = (name)->
     return if componentsConstructors[name]?
@@ -30,6 +32,11 @@ loadGame = (
       throw new Error "Component '#{name}' not found."
 
     componentConstructor.pathTo = pathTo
+
+    if not componentConstructor.isServerOnly
+      relPath = path.relative srcDir, pathTo
+      reqPath = if relPath[0] is '.' then relPath else "./#{relPath}"
+      componentsRequires.push "  #{name}: require '#{reqPath}/client/#{name}'"
 
     componentsConstructors[name] = componentConstructor
 
@@ -59,6 +66,12 @@ loadGame = (
 
   coffee.eval content, {sandbox}
 
-  return {gameComponents, scenes, componentsConstructors}
+  requiresSource = """
+require('game/client/index') {
+#{componentsRequires.join '\n'}
+}
+"""
+
+  return {gameComponents, scenes, componentsConstructors, requiresSource}
 
 module.exports = loadGame
