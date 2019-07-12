@@ -2,11 +2,13 @@ coffee = require 'coffeescript'
 path = require 'path'
 
 loadGame = (
-  {srcDir, gameFile, components = {}, fs = require('fs'), load = (->{})}
+  {srcDir, gameFile, components = {}, env, fs = require('fs'), load = (->{})}
 )->
   gameComponents = {}
   scenes = {}
+
   componentsConstructors = {}
+  componentsRequires = []
 
   loadComponentConstructor = (name)->
     return if componentsConstructors[name]?
@@ -31,6 +33,11 @@ loadGame = (
 
     componentConstructor.pathTo = pathTo
 
+    if not componentConstructor.isServerOnly
+      relPath = path.relative srcDir, pathTo
+      reqPath = if relPath[0] is '.' then relPath else "./#{relPath}"
+      componentsRequires.push "  #{name}: require '#{reqPath}/client/#{name}'"
+
     componentsConstructors[name] = componentConstructor
 
   content = fs.readFileSync srcDir + gameFile + '.coffee', encoding: 'utf8'
@@ -53,11 +60,18 @@ loadGame = (
     scenes[sceneID] = sceneComponents
 
   sandbox =
+    env: env
     components: loadGameComponents
     scene: scene
 
   coffee.eval content, {sandbox}
 
-  return {gameComponents, scenes, componentsConstructors}
+  requiresSource = """
+require('game/client/index') {
+#{componentsRequires.join '\n'}
+}
+"""
+
+  return {gameComponents, scenes, componentsConstructors, requiresSource}
 
 module.exports = loadGame

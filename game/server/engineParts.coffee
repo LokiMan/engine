@@ -1,6 +1,9 @@
 EngineParts = (
   {components, scenes, storage, router, cron, logger, auth, remotes, packFor}
-)-> (name)->
+)-> (componentName)->
+  remote = (player, command...)->
+    remotes.get(player)?.callFor componentName, command
+
   {
     components
     scenes
@@ -10,18 +13,21 @@ EngineParts = (
     logger
     auth
 
-    remote: (player, command...)->
-      remotes.get(player)?.callFor name, command
+    remote
 
     broadcast: (players, command...)->
-      message = packFor name, command
+      message = packFor componentName, command
       for player in players
         remotes.get(player)?.raw message
 
     broadcastOnline: (command...)->
-      message = packFor name, command
-      for remote from remotes.values()
-        remote.raw message
+      message = packFor componentName, command
+      for rmt from remotes.values()
+        rmt.raw message
+
+    deSync: (player, args...)->
+      logger.info "deSync(#{player.id}, #{componentName}):", args...
+      remote player, '__world.reload'
   }
 
 module.exports = EngineParts

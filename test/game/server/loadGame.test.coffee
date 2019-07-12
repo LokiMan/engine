@@ -8,7 +8,7 @@ describe 'Read Game', ->
       readFileSync: -> content
       existsSync: -> true
 
-    loadGame fs: fakeFS
+    loadGame srcDir: '', fs: fakeFS
 
   it 'should read game components if they set', ->
     result = readGame """

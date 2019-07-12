@@ -32,7 +32,7 @@ worldPort = Number(gamePort) + 1
 
 packageJson = require path.join gameDir, './package.json'
 
-{NODE_ENV} = process.env
+{NODE_ENV = 'local'} = process.env
 storage = initStorage gameDir, packageJson, NODE_ENV
 
 gameFile = process.env['npm_package_main'] ? 'game'
@@ -80,15 +80,11 @@ startGame = (logger)->
   auth = UIDGenerator playersCollection, router, title, cookieName, expires
 
   {
-    gameComponents, scenes, componentsConstructors
+    gameComponents, scenes, componentsConstructors, requiresSource
   } = loadGame {
     srcDir, gameFile, components: packageJson.components, load: require
+    env: NODE_ENV
   }
-
-  if NODE_ENV in ['production', 'test']
-    checkAndSkipDebug gameComponents
-    for id, scene of scenes
-      checkAndSkipDebug scene
 
   Engine = EngineFactory {
     components: gameComponents, scenes
@@ -108,14 +104,9 @@ startGame = (logger)->
 
   server.on 'request', router
 
-  {componentsConstructors, components, players, router, hb}
+  {requiresSource, components, players, router, hb}
 
-checkAndSkipDebug = (components)->
-  for name in Object.keys(components)
-    if name.startsWith '_debug_'
-      delete components[name]
-
-{componentsConstructors, router, hb} = startGame logger
+{requiresSource, router, hb} = startGame logger
 
 process.on 'uncaughtException', logger.exception
 
@@ -123,7 +114,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
   DevServer = require './dev-server/index'
 
   devServer = DevServer engineDir, {
-    gamePort, gameFile, worldPort, componentsConstructors
+    gamePort, gameFile, worldPort, requiresSource
   }, ->
     cron.reStart()
 
@@ -137,7 +128,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
     process.on 'uncaughtException', logger.exception
 
     {
-      componentsConstructors, components, players, router, hb
+      requiresSource, components, players, router, hb
     } = startGame logger
 
     prevCall = components.callSceneComponents
@@ -150,7 +141,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
 
       prevCall.call components, player, functionName, args...
 
-    componentsConstructors
+    requiresSource
 
   if packageJson.build?
     for name, entry of packageJson.build
