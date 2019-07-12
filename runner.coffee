@@ -32,7 +32,7 @@ worldPort = Number(gamePort) + 1
 
 packageJson = require path.join gameDir, './package.json'
 
-{NODE_ENV} = process.env
+{NODE_ENV = 'local'} = process.env
 storage = initStorage gameDir, packageJson, NODE_ENV
 
 gameFile = process.env['npm_package_main'] ? 'game'
@@ -83,6 +83,7 @@ startGame = (logger)->
     gameComponents, scenes, componentsConstructors
   } = loadGame {
     srcDir, gameFile, components: packageJson.components, load: require
+    env: NODE_ENV
   }
 
   if NODE_ENV in ['production', 'test']

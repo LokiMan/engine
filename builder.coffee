@@ -17,7 +17,7 @@ srcDir = path.join gameDir, './src/'
 {
   componentsConstructors
 } = loadGame {
-  srcDir, gameFile, components: packageJson.components, fs
+  srcDir, gameFile, components: packageJson.components, fs, env: 'production'
 }
 
 componentsRequires = []

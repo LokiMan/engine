@@ -2,7 +2,7 @@ coffee = require 'coffeescript'
 path = require 'path'
 
 loadGame = (
-  {srcDir, gameFile, components = {}, fs = require('fs'), load = (->{})}
+  {srcDir, gameFile, components = {}, env, fs = require('fs'), load = (->{})}
 )->
   gameComponents = {}
   scenes = {}
@@ -53,6 +53,7 @@ loadGame = (
     scenes[sceneID] = sceneComponents
 
   sandbox =
+    env: env
     components: loadGameComponents
     scene: scene
 
