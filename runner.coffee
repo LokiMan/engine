@@ -86,11 +86,6 @@ startGame = (logger)->
     env: NODE_ENV
   }
 
-  if NODE_ENV in ['production', 'test']
-    checkAndSkipDebug gameComponents
-    for id, scene of scenes
-      checkAndSkipDebug scene
-
   Engine = EngineFactory {
     components: gameComponents, scenes
     storage, router, cron, logger, auth, remotes
@@ -110,11 +105,6 @@ startGame = (logger)->
   server.on 'request', router
 
   {componentsConstructors, components, players, router, hb}
-
-checkAndSkipDebug = (components)->
-  for name in Object.keys(components)
-    if name.startsWith '_debug_'
-      delete components[name]
 
 {componentsConstructors, router, hb} = startGame logger
 

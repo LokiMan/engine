@@ -21,10 +21,7 @@ srcDir = path.join gameDir, './src/'
 }
 
 componentsRequires = []
-isNeed = (name, component)->
-  (not name.startsWith '_debug_') and (not component.isServerOnly)
-
-for name, component of componentsConstructors when isNeed name, component
+for name, component of componentsConstructors when not component.isServerOnly
   relPath = path.relative gameDir, component.pathTo
   reqPath = if relPath[0] is '.' then relPath else "./#{relPath}"
   componentsRequires.push "  #{name}: require '#{reqPath}/client/#{name}'"
