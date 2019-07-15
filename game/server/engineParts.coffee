@@ -26,7 +26,8 @@ EngineParts = (
         rmt.raw message
 
     deSync: (player, args...)->
-      logger.info "deSync(#{player.id}, #{componentName}):", args...
+      msg = "deSync(#{player.id}, #{player.scene.id}.#{componentName}):"
+      logger.info msg, args...
       remote player, '__world.reload'
   }
 
