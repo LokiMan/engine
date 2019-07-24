@@ -67,7 +67,7 @@ loadGame = (
   coffee.eval content, {sandbox}
 
   requiresSource = """
-require('game/client/index') {
+(require 'game/client/index') {
 #{componentsRequires.join '\n'}
 }
 """
