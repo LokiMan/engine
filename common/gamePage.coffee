@@ -1,10 +1,13 @@
 defaultBodyStyle = 'background: #E5E6D8; color: #000;'
 
-metaLines = "
+metaLines = (meta)->
+  viewport = meta.viewport ? 'width=1024, user-scalable=no'
+
+  "
 \n    <meta name='apple-mobile-web-app-capable' content='yes'/>
 \n    <meta name='apple-mobile-web-app-status-bar-style' content='black' />
 \n    <meta name='mobile-web-app-capable' content='yes' />
-\n    <meta name='viewport' content='width=1024, user-scalable=no' />
+\n    <meta name='viewport' content='#{viewport}' />
 "
 
 {NODE_ENV} = process.env
@@ -49,7 +52,7 @@ GamePage = (
 #{title}</title>#{metasLines}
     <link rel='shortcut icon' href='/res/img/favicon.ico'>
     <link rel="apple-touch-icon" href='/res/img/favicon.ico'>\
-#{if meta then metaLines else ''}
+#{if meta then metaLines(meta) else ''}
     <style type="text/css">
       * {
         -webkit-tap-highlight-color: rgba(0,0,0,0);
