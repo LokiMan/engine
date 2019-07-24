@@ -50,6 +50,11 @@ Elements = (create)->
       type: 'radio'
     }, props
 
+  checkbox: (props)->
+    create 'input', mergeDeep {
+      type: 'checkbox'
+    }, props
+
   label: (props, next)->
     create 'label', props, next
 
