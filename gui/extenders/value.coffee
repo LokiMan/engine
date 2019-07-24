@@ -11,4 +11,7 @@ Value = (domElement, value, guiElement)->
   guiElement.focus = ->
     domElement.focus()
 
+  guiElement.blur = ->
+    domElement.blur()
+
 module.exports = Value
