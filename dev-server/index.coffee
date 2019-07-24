@@ -15,6 +15,8 @@ DevServer = (
 )->
   gameDir = process.cwd()
 
+  gameName = (_ref = gameDir.split('/'))[_ref.length - 1]
+
   srcDir = path.join gameDir, './src/'
 
   packers = {
@@ -87,7 +89,7 @@ DevServer = (
         console.log '\x1Bc' # clear console
 
         console.log (new Date).toLocaleString(),
-          ': game reloaded ========================================='
+          ": #{gameName} reloaded ========================================="
 
         for client in clients
           client.send 'reload'
