@@ -19,20 +19,20 @@ gui.sceneContainer = sceneContainer
 animate = Animate()
 gui.animate = animate
 
-Game = (scenesComponentsConstructors, gameComponentsConstructors)->
+Game = (componentsConstructors)->
   remote = Remote Connection(), ({target, action, args})->
-    (scene[target] ? gameComponents[target])?[action]? args...
+    (scene[target]?[action] ? gameComponents[target]?[action])? args...
 
   initGame = ([componentsInfo, sceneInfo])->
-    initComponents gameComponentsConstructors, gameComponents,
+    initComponents componentsConstructors, gameComponents,
       remote, componentsInfo, scene, gui
 
-    updateScene = UpdateScene scenesComponentsConstructors, scene, remote,
+    updateScene = UpdateScene componentsConstructors, scene, remote,
       sceneContainer, gameComponents, animate, gui
 
     updateScene sceneInfo
 
-    scene.__world = {updateScene}
+    scene.__world = {updateScene, reload: -> window.location.reload()}
 
     document.onkeydown = (e)->
       for [name] in componentsInfo by -1

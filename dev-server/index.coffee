@@ -10,10 +10,12 @@ Development = require './packer/development'
 
 DevServer = (
   engineDir
-  {gamePort, gameFile, worldPort, gameComponents, scenesComponents, includes}
+  {gamePort, gameFile, worldPort, requiresSource}
   reStartGame
 )->
   gameDir = process.cwd()
+
+  gameName = (_ref = gameDir.split('/'))[_ref.length - 1]
 
   srcDir = path.join gameDir, './src/'
 
@@ -25,35 +27,10 @@ DevServer = (
 
   serverInError = ''
 
-  setEntry = ({gameComponents, scenesComponents, includes})->
-    generateScenesComponentsRequires = ->
-      result = []
-      for name, componentConstructor of scenesComponents
-        if not componentConstructor.isServerOnly
-          pathTo = path.relative srcDir, componentConstructor.pathTo
-          result.push "  #{name}: require './#{pathTo}/client/#{name}'"
+  setEntry = (source)->
+    packers.game.setEntry 'game', srcDir, source
 
-      return result.join '\n'
-
-    generateGameComponentsRequires = ->
-      result = []
-      for name, component of gameComponents when component.toClient?
-        pathTo = path.relative srcDir, component.pathTo
-        result.push "  #{name}: require './#{pathTo}/client/#{name}'"
-
-      return result.join '\n'
-
-    packers.game.setEntry 'game', srcDir, """
-Game = require 'game/client'
-
-Game {
-#{generateScenesComponentsRequires()}
-}, {
-#{generateGameComponentsRequires()}
-}
-  """
-
-  setEntry {gameComponents, scenesComponents, includes}
+  setEntry requiresSource
 
   reloadGame = ->
     try
@@ -75,7 +52,7 @@ Game {
 
       pathName = filePath[... -'.coffee'.length]
 
-      if pathName is gameFile or includes.includes pathName
+      if pathName is gameFile
         found = true
         needGameReload = true
         {clients} = packers.game
@@ -112,7 +89,7 @@ Game {
         console.log '\x1Bc' # clear console
 
         console.log (new Date).toLocaleString(),
-          ': game reloaded ========================================='
+          ": #{gameName} reloaded ========================================="
 
         for client in clients
           client.send 'reload'

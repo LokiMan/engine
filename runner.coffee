@@ -9,6 +9,7 @@ dates = require './common/dates'
 
 heartbeat = require './rpc/server/heartbeat'
 loadGame = require './game/server/loadGame'
+EngineFactory = require './game/server/engineParts'
 constructGame = require './game/server/constructGame'
 GoTo = require './game/server/goTo'
 PlayerFactory = require './game/server/playerFactory'
@@ -31,7 +32,7 @@ worldPort = Number(gamePort) + 1
 
 packageJson = require path.join gameDir, './package.json'
 
-{NODE_ENV} = process.env
+{NODE_ENV = 'local'} = process.env
 storage = initStorage gameDir, packageJson, NODE_ENV
 
 gameFile = process.env['npm_package_main'] ? 'game'
@@ -78,15 +79,20 @@ startGame = (logger)->
   expires = Number process.env['npm_package_uidGenerator_expires']
   auth = UIDGenerator playersCollection, router, title, cookieName, expires
 
-  {gameComponents, scenes, includes} = loadGame dir: srcDir, file: gameFile
+  {
+    gameComponents, scenes, componentsConstructors, requiresSource
+  } = loadGame {
+    srcDir, gameFile, components: packageJson.components, load: require
+    env: NODE_ENV
+  }
 
-  if NODE_ENV in ['production', 'test']
-    checkAndSkipDebug gameComponents
-    for id, scene of scenes
-      checkAndSkipDebug scene
+  Engine = EngineFactory {
+    components: gameComponents, scenes
+    storage, router, cron, logger, auth, remotes
+    packFor: Remote.packFor
+  }
 
-  scenesComponents = constructGame gameComponents, scenes, srcDir,
-    storage, remotes, Remote.packFor, router, cron, logger, auth
+  constructGame gameComponents, scenes, componentsConstructors, Engine
 
   components = Components gameComponents, logger
   goTo = GoTo storage, scenes, startScene, components, remotes, logger,
@@ -98,14 +104,9 @@ startGame = (logger)->
 
   server.on 'request', router
 
-  {gameComponents, scenesComponents, includes, components, players, router, hb}
+  {requiresSource, components, players, router, hb}
 
-checkAndSkipDebug = (components)->
-  for name in Object.keys(components)
-    if name.startsWith '_debug_'
-      delete components[name]
-
-{gameComponents, scenesComponents, includes, router, hb} = startGame logger
+{requiresSource, router, hb} = startGame logger
 
 process.on 'uncaughtException', logger.exception
 
@@ -113,7 +114,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
   DevServer = require './dev-server/index'
 
   devServer = DevServer engineDir, {
-    gamePort, gameFile, worldPort, gameComponents, scenesComponents, includes
+    gamePort, gameFile, worldPort, requiresSource
   }, ->
     cron.reStart()
 
@@ -127,8 +128,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
     process.on 'uncaughtException', logger.exception
 
     {
-      gameComponents, scenesComponents, includes, components, players, router,
-      hb
+      requiresSource, components, players, router, hb
     } = startGame logger
 
     prevCall = components.callSceneComponents
@@ -141,7 +141,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
 
       prevCall.call components, player, functionName, args...
 
-    {gameComponents, scenesComponents, includes}
+    requiresSource
 
   if packageJson.build?
     for name, entry of packageJson.build
