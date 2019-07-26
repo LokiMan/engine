@@ -62,3 +62,16 @@ scene 'first',
       ['nested/levelTwo/andThree/server/andThree.coffee']
       ['nested/levelTwo/andThree/client/andThree.coffee']
     ]
+
+  it 'should use full path of external components', ->
+    fakeFS =
+      readFileSync: -> 'components ext: true'
+      existsSync: spy -> true
+    components = ext: '../extProject/src/sub/comp'
+
+    loadGame {srcDir: '', fs: fakeFS, components}
+
+    expect(fakeFS.existsSync.calls).to.eql [
+      ['../../extProject/src/sub/comp/server/comp.coffee']
+      ['../../extProject/src/sub/comp/client/comp.coffee']
+    ]

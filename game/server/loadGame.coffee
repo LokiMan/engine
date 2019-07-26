@@ -14,9 +14,10 @@ loadGame = (
     return if componentsConstructors[name]?
 
     if (relPath = components[name])?
-      dir = path.join (srcDir + '../'), (relPath + '/')
-      pathTo = "#{dir}#{name}"
-      nameFile = name
+      pathTo = path.join (srcDir + '../'), relPath
+
+      index = relPath.lastIndexOf '/'
+      nameFile = relPath[(index + 1)..]
     else
       [pathTo, nameFile] = findComponentDir name
 
@@ -40,7 +41,7 @@ loadGame = (
     componentsConstructors[name] = componentConstructor
 
   findComponentDir = (name)->
-    pathName = name.replace /_/g, '/'
+    pathName = name.replace /(?!^)_/g, '/'
 
     pathTo = "#{srcDir}#{pathName}"
 

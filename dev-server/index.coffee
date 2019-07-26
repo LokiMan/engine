@@ -62,7 +62,7 @@ DevServer = (
         length = pathParts.length
         return if length < 3 # at least name/type/name
 
-        if ['server', 'lib'].includes pathParts[length - 2]
+        if ['server', 'lib'].some (p)-> pathParts.includes p
           componentPath = path.join srcDir, pathParts[0..(length - 3)].join('/')
           for name in Object.keys require.cache
             if name.startsWith componentPath
@@ -72,7 +72,7 @@ DevServer = (
           needGameReload = true
           {clients} = wss
 
-        if ['client', 'lib'].includes pathParts[length - 2]
+        if ['client', 'lib'].some (p)-> pathParts.includes p
           for name, packer of packers
             try
               if packer.reLoad pathName
