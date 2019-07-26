@@ -58,4 +58,4 @@ describe 'GoTo', ->
 
         expect(storage.set.calls[0][1]).to.eql 'scene2'
 
-        expect(remote.calls).to.eql [['__world.updateScene', 'sceneData']]
+        expect(remote.calls).to.eql [['updateScene', 'sceneData']]

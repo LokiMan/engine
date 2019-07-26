@@ -44,7 +44,7 @@ Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
 
     callback connection
 
-    remote '__world.initGame', [
+    remote 'init', [
       components.gameComponentsToClient player
       components.sceneToClient player
     ]

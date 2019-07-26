@@ -32,7 +32,7 @@ GoTo = (storage, scenes, startScene, components, remotes, logger, collection)->
       remote = remotes.get player
       if remote?
         sceneData = sceneToClient player, fromScene
-        remote '__world.updateScene', sceneData
+        remote 'updateScene', sceneData
 
   {onPlayer}
 

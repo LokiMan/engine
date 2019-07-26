@@ -44,3 +44,13 @@ describe 'remote', ->
       [{target: 'name', action: 'fnc1', args: [1]}]
       [{target: 'name', action: 'fnc2', args: ['b']}]
     ]
+
+  it 'should skip target if no dot in command name', ->
+    connection = {}
+    Remote connection, onCommand = spy()
+
+    connection.onMessage JSON.stringify(['fnc', 1, 'b'])
+
+    expect(onCommand.calls).to.eql [
+      [{target: '', action: 'fnc', args: [1, 'b']}]
+    ]

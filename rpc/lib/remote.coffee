@@ -33,8 +33,12 @@ Remote = (connection, onCommand)->
 
   runCommand = ([fullName, args...])->
     pos = fullName.indexOf '.'
-    target = fullName[0...pos]
-    action = fullName[(pos + 1)...]
+    if pos is -1
+      target = ''
+      action = fullName
+    else
+      target = fullName[0...pos]
+      action = fullName[(pos + 1)...]
 
     onCommand {target, action, args}
 
