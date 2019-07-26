@@ -3,10 +3,10 @@ spy = require '../../../common/test_helpers/spy'
 describe 'Read Game', ->
   loadGame = require '../../../game/server/loadGame'
 
-  readGame = (content)->
+  readGame = (content, existsSync = (-> true))->
     fakeFS =
       readFileSync: -> content
-      existsSync: -> true
+      existsSync: existsSync
 
     loadGame srcDir: '', fs: fakeFS
 
@@ -51,3 +51,14 @@ scene 'first',
   cmp1: true
 """
     expect(fn).to.throw 'Duplicated scene'
+
+  it 'should read nested components', ->
+    existsSpy = spy -> false
+
+    try
+      readGame 'components nested_levelTwo_andThree: true', existsSpy
+
+    expect(existsSpy.calls).to.eql [
+      ['nested/levelTwo/andThree/server/andThree.coffee']
+      ['nested/levelTwo/andThree/client/andThree.coffee']
+    ]
