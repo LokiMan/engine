@@ -5,6 +5,7 @@ EngineParts = (
     remotes.get(player)?.callFor componentName, command
 
   {
+    components...
     components
     scenes
     storage

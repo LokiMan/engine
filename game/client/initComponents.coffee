@@ -3,6 +3,7 @@ initComponents = (constructors, components, remote, info, scene, gui)->
     constructor = constructors[name]
 
     arg = {
+      components...
       components
       scene
       gui

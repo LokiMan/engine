@@ -12,6 +12,7 @@ UpdateScene = (
         container.remove()
 
       arg = {
+        gameComponents...
         components: gameComponents
         scene
         gui
