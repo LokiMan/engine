@@ -13,32 +13,42 @@ loadGame = (
   loadComponentConstructor = (name)->
     return if componentsConstructors[name]?
 
-    dir = if (relPath = components[name])?
-      path.join (srcDir + '../'), (relPath + '/')
+    if (relPath = components[name])?
+      pathTo = path.join (srcDir + '../'), relPath
+
+      index = relPath.lastIndexOf '/'
+      nameFile = relPath[(index + 1)..]
     else
-      srcDir
+      [pathTo, nameFile] = findComponentDir name
 
-    pathTo = "#{dir}#{name}"
-
-    pathToServer = "#{pathTo}/server/#{name}"
+    pathToServer = "#{pathTo}/server/#{nameFile}"
     if fs.existsSync pathToServer + '.coffee'
       componentConstructor = load pathToServer
 
-      if not fs.existsSync "#{pathTo}/client/#{name}.coffee"
+      if not fs.existsSync "#{pathTo}/client/#{nameFile}.coffee"
         componentConstructor.isServerOnly = true
-    else if fs.existsSync "#{pathTo}/client/#{name}.coffee"
+    else if fs.existsSync "#{pathTo}/client/#{nameFile}.coffee"
       componentConstructor = isClientOnly: true
     else
       throw new Error "Component '#{name}' not found."
 
-    componentConstructor.pathTo = pathTo
-
     if not componentConstructor.isServerOnly
       relPath = path.relative srcDir, pathTo
       reqPath = if relPath[0] is '.' then relPath else "./#{relPath}"
-      componentsRequires.push "  #{name}: require '#{reqPath}/client/#{name}'"
+      reqLine = "  #{name}: require '#{reqPath}/client/#{nameFile}'"
+      componentsRequires.push reqLine
 
     componentsConstructors[name] = componentConstructor
+
+  findComponentDir = (name)->
+    pathName = name.replace /(?!^)_/g, '/'
+
+    pathTo = "#{srcDir}#{pathName}"
+
+    index = pathName.lastIndexOf '/'
+    nameFile = if index is -1 then pathName else pathName[(index + 1)..]
+
+    [pathTo, nameFile]
 
   content = fs.readFileSync srcDir + gameFile + '.coffee', encoding: 'utf8'
 

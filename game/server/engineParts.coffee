@@ -5,6 +5,7 @@ EngineParts = (
     remotes.get(player)?.callFor componentName, command
 
   {
+    components...
     components
     scenes
     storage
@@ -28,7 +29,7 @@ EngineParts = (
     deSync: (player, args...)->
       msg = "deSync(#{player.id}, #{player.scene.id}.#{componentName}):"
       logger.info msg, args...
-      remote player, '__world.reload'
+      remotes.get(player)? 'reload'
   }
 
 module.exports = EngineParts

@@ -20,10 +20,13 @@ animate = Animate()
 gui.animate = animate
 
 Game = (componentsConstructors)->
-  remote = Remote Connection(), ({target, action, args})->
-    (scene[target]?[action] ? gameComponents[target]?[action])? args...
+  _game = null
 
-  initGame = ([componentsInfo, sceneInfo])->
+  remote = Remote Connection(), ({target, action, args})->
+    f = scene[target]?[action] ? gameComponents[target]?[action] ? _game[action]
+    f? args...
+
+  init = ([componentsInfo, sceneInfo])->
     initComponents componentsConstructors, gameComponents,
       remote, componentsInfo, scene, gui
 
@@ -32,7 +35,7 @@ Game = (componentsConstructors)->
 
     updateScene sceneInfo
 
-    scene.__world = {updateScene, reload: -> window.location.reload()}
+    _game = {updateScene, reload: -> window.location.reload()}
 
     document.onkeydown = (e)->
       for [name] in componentsInfo by -1
@@ -40,10 +43,10 @@ Game = (componentsConstructors)->
         if component.onKeyDown?(e) is true
           break
 
-      for name, component of scene when name isnt '__world'
+      for name, component of scene
         component.onKeyDown? e
       return
 
-  scene.__world = {initGame}
+  _game = {init}
 
 module.exports = Game

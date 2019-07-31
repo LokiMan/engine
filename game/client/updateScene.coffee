@@ -12,6 +12,7 @@ UpdateScene = (
         container.remove()
 
       arg = {
+        gameComponents...
         components: gameComponents
         scene
         gui
@@ -40,7 +41,7 @@ UpdateScene = (
 
     console.info 'scene:', componentsObj
 
-    for name, component of scene when name isnt '__world'
+    for name, component of scene
       if not componentsObj[name]?
         scene[name].removeComponent?()
         delete scene[name]
