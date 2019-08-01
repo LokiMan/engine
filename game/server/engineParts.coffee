@@ -31,7 +31,7 @@ EngineParts = ({
     deSync: (player, args...)->
       msg = "deSync(#{player.id}, #{player.scene.id}.#{componentName}):"
       logger.info msg, args...
-      remotes.get(player)? 'reload'
+      remotes.get(player)? 'reSync'
   }
 
 module.exports = EngineParts
