@@ -24,4 +24,8 @@ SubscribeState = (wait)-> (connection, res)->
     res.removeListener 'finish', onFinish
     res.end 'disconnect'
 
+  connection.reconnect = ->
+    res.removeListener 'finish', onFinish
+    res.end 'reconnect'
+
 module.exports = SubscribeState

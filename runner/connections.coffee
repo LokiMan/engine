@@ -84,4 +84,11 @@ Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
   router.head['/'] = (req, res)->
     res.end()
 
+  reconnectAll = ->
+    for connection from connections.values()
+      connection.reconnect()
+    connections.clear()
+
+  {reconnectAll}
+
 module.exports = Connections

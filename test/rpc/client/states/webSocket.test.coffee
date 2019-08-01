@@ -25,13 +25,3 @@ describe 'WebSocketState', ->
       socket.onmessage data: message
 
       expect(connection.onMessage.calls).to.eql [[message]]
-
-    it "should send 'pong' on 'ping' in onmessage", ->
-      socket = send: spy()
-      webSocket = WebSocketState {}
-      webSocket.connect socket
-
-      socket.onmessage data: 'ping'
-
-      expect(socket.send.calls).to.eql [['pong']]
-

@@ -1,14 +1,11 @@
-timeStart = Date.now()
-
 path = require 'path'
+fs = require 'fs'
 http = require 'http'
 ws = require 'ws'
 
-dates = require './common/dates'
-{interval} = require './common/timers'
-
 heartbeat = require './rpc/server/heartbeat'
 loadGame = require './game/server/loadGame'
+GamePageFactory = require './game/server/gamePage'
 EngineFactory = require './game/server/engineParts'
 constructGame = require './game/server/constructGame'
 GoTo = require './game/server/goTo'
@@ -32,11 +29,12 @@ worldPort = Number(gamePort) + 1
 
 packageJson = require path.join gameDir, './package.json'
 
-{NODE_ENV = 'local'} = process.env
+{env} = process
+{NODE_ENV = 'local'} = env
 storage = initStorage gameDir, packageJson, NODE_ENV
 
-gameFile = process.env['npm_package_main'] ? 'game'
-startScene = process.env['npm_package_startScene'] ? 'start'
+gameFile = env['npm_package_main'] ? 'game'
+startScene = env['npm_package_startScene'] ? 'start'
 
 srcDir = path.join gameDir, './src/'
 
@@ -46,7 +44,7 @@ remotes = new Map
 cron = Cron()
 logger = Logger()
 
-title = process.env['npm_package_title'] ? 'no_title'
+title = env['npm_package_title'] ? 'no_title'
 
 playerScenesCollectionName = 'playerScene'
 
@@ -61,7 +59,7 @@ server.listen worldPort, 'localhost', ->
   logger.info "#{title} running at http://localhost:#{gamePort}/"
 
 engineDir = __dirname
-process.env.NODE_PATH = "#{engineDir}#{path.delimiter}#{process.env.NODE_PATH}"
+env.NODE_PATH = "#{engineDir}#{path.delimiter}#{env.NODE_PATH}"
 require('module').Module._initPaths()
 
 startGame = (logger)->
@@ -72,11 +70,11 @@ startGame = (logger)->
     cookie = req.cookie = parseCookie req.headers.cookie
     if (uid = auth.getUid cookie)? then players.getByUID(uid) else null
 
-  router = Router process.env['npm_package_routerMaxPostLength'], obtainPlayer
+  router = Router env['npm_package_routerMaxPostLength'], obtainPlayer
 
   playersCollection = storage.getRef [playerScenesCollectionName]
-  cookieName = process.env['npm_package_uidGenerator_cookieName']
-  expires = Number process.env['npm_package_uidGenerator_expires']
+  cookieName = env['npm_package_uidGenerator_cookieName']
+  expires = Number env['npm_package_uidGenerator_expires']
   auth = UIDGenerator playersCollection, router, title, cookieName, expires
 
   {
@@ -86,10 +84,15 @@ startGame = (logger)->
     env: NODE_ENV
   }
 
+  {
+    GamePage, refreshGamePagesHash
+  } = GamePageFactory env['npm_package_title'], env['npm_package_body'],
+    env['npm_package_container'], getGamePagesHash
+
   Engine = EngineFactory {
     components: gameComponents, scenes
     storage, router, cron, logger, auth, remotes
-    packFor: Remote.packFor
+    packFor: Remote.packFor, GamePage
   }
 
   constructGame gameComponents, scenes, componentsConstructors, Engine
@@ -99,12 +102,28 @@ startGame = (logger)->
     playerScenesCollectionName
   players = PlayerFactory gameComponents, goTo
 
-  Connections webSocketServer, router, remotes, components, obtainPlayer
-  hb = heartbeat webSocketServer, interval
+  connections = Connections webSocketServer, router, remotes, components,
+    obtainPlayer
+
+  router.get['/__core/refreshHash'] = (req, res)->
+    refreshGamePagesHash()
+    connections.reconnectAll()
+    res.end 'ok.'
+
+  hb = heartbeat webSocketServer
 
   server.on 'request', router
 
   {requiresSource, components, players, router, hb}
+
+getGamePagesHash = ->
+  if NODE_ENV in ['production', 'test']
+    gameDir = process.cwd()
+    pathHash = path.join(gameDir, 'res/js/hash.json')
+    hashJsonText = fs.readFileSync pathHash, {encoding: 'utf8'}
+    JSON.parse hashJsonText
+  else
+    null
 
 {requiresSource, router, hb} = startGame logger
 

@@ -1,6 +1,7 @@
-EngineParts = (
-  {components, scenes, storage, router, cron, logger, auth, remotes, packFor}
-)-> (componentName)->
+EngineParts = ({
+  components, scenes, storage, router, cron, logger, auth, remotes, packFor
+  GamePage
+})-> (componentName)->
   remote = (player, command...)->
     remotes.get(player)?.callFor componentName, command
 
@@ -13,6 +14,7 @@ EngineParts = (
     cron
     logger
     auth
+    GamePage
 
     remote
 
