@@ -9,13 +9,13 @@ GamePageFactory = (
   pageRefreshes = []
 
   GamePage = ({
-    title = baseTitle, meta = true, metas
+    title = baseTitle, meta = true, metas, entry = 'game'
     bodyStyle = baseBodyStyle, container = baseContainer
   })->
     beforeTitle = getBeforeTitle()
 
     afterTitle = getAfterTitle title, metas, meta, container, bodyStyle
-    afterTitleAndScriptLine = afterTitle + getScriptLine()
+    afterTitleAndScriptLine = afterTitle + getScriptLine entry
 
     begin = beforeTitle + afterTitleAndScriptLine
     end = '\n  </body>\n</html>'
@@ -23,7 +23,7 @@ GamePageFactory = (
     both = begin + end
 
     pageRefreshes.push ->
-      afterTitleAndScriptLine = afterTitle + getScriptLine()
+      afterTitleAndScriptLine = afterTitle + getScriptLine entry
       begin = beforeTitle + afterTitleAndScriptLine
       both = begin + end
 
@@ -88,8 +88,11 @@ font: 16px trebuchet ms, Tahoma, Arial, Helvetica, sans-serif; #{bodyStyle}">
 \n    <meta name='viewport' content='#{viewport}' />
 "
 
-  getScriptLine = ->
-    entryName = if hash? then "/res/js/game-#{hash['game']}" else '/js/game'
+  getScriptLine = (entry)->
+    entryName = if hash?
+      "/res/js/#{entry}-#{hash[entry]}"
+    else
+      "/js/#{entry}"
     "<script type='text/javascript' src='#{entryName}.js'></script>"
 
   refreshGamePagesHash = ->

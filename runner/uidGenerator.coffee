@@ -1,23 +1,15 @@
 dates = require '../common/dates'
 {RandomString} = require '../common/rand'
 
-GamePage = require '../common/gamePage'
-
 UID_EXPIRES_3_YEARS = 1000 * 60 * 60 * 24 * 365 * 3
 
 UIDGenerator = (
-  playersCollection, router, title
+  playersCollection, router, GamePage
   cookieName = 'uid', expiresMSec = UID_EXPIRES_3_YEARS
 )->
   randomString = RandomString playersCollection
 
-  indexPage = GamePage {
-    title
-    meta: true
-    entries: ['game']
-    bodyStyle: process.env['npm_package_body']
-    container: process.env['npm_package_container']
-  }
+  indexPage = GamePage {}
 
   router.get['/'] = (req, res, player)->
     if not player?

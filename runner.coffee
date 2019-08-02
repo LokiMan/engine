@@ -72,11 +72,6 @@ startGame = (logger)->
 
   router = Router env['npm_package_routerMaxPostLength'], obtainPlayer
 
-  playersCollection = storage.getRef [playerScenesCollectionName]
-  cookieName = env['npm_package_uidGenerator_cookieName']
-  expires = Number env['npm_package_uidGenerator_expires']
-  auth = UIDGenerator playersCollection, router, title, cookieName, expires
-
   {
     gameComponents, scenes, componentsConstructors, requiresSource
   } = loadGame {
@@ -88,6 +83,11 @@ startGame = (logger)->
     GamePage, refreshGamePagesHash
   } = GamePageFactory env['npm_package_title'], env['npm_package_body'],
     env['npm_package_container'], getGamePagesHash
+
+  playersCollection = storage.getRef [playerScenesCollectionName]
+  cookieName = env['npm_package_uidGenerator_cookieName']
+  expires = Number env['npm_package_uidGenerator_expires']
+  auth = UIDGenerator playersCollection, router, GamePage, cookieName, expires
 
   Engine = EngineFactory {
     components: gameComponents, scenes
@@ -119,7 +119,7 @@ startGame = (logger)->
 getGamePagesHash = ->
   if NODE_ENV in ['production', 'test']
     gameDir = process.cwd()
-    pathHash = path.join(gameDir, 'res/js/hash.json')
+    pathHash = path.join gameDir, 'res/js/hash.json'
     hashJsonText = fs.readFileSync pathHash, {encoding: 'utf8'}
     JSON.parse hashJsonText
   else
