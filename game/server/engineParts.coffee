@@ -20,7 +20,7 @@ EngineParts = ({
 
     broadcast: (players, command...)->
       message = packFor componentName, command
-      for player in players
+      for player from players
         remotes.get(player)?.raw message
 
     broadcastOnline: (command...)->
