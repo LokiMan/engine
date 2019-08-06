@@ -3,7 +3,7 @@
 cmd = process.argv.splice(2, 1)[0]
 
 if not cmd?
-  console.info 'Use as engine <cmd>'
+  console.info 'Use as engine <cmd> args...'
   process.exit 1
 
 commands =
