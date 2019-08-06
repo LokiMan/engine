@@ -138,7 +138,7 @@ if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
   devServer = DevServer engineDir, {
     gamePort, gameFile, worldPort, requiresSource
   }, ->
-    cron.reStart()
+    cron.clear()
 
     process.removeListener 'uncaughtException', logger.exception
     server.removeListener 'request', router
