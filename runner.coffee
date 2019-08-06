@@ -27,24 +27,23 @@ gameDir = process.cwd()
 gamePort = process.argv[2]
 worldPort = Number(gamePort) + 1
 
+gameName = (_ref = gameDir.split('/'))[_ref.length - 1]
+
 packageJson = require path.join gameDir, './package.json'
 
 {env} = process
 {NODE_ENV = 'local'} = env
 storage = initStorage gameDir, packageJson, NODE_ENV
 
-gameFile = env['npm_package_main'] ? 'game'
-startScene = env['npm_package_startScene'] ? 'start'
-
 srcDir = path.join gameDir, './src/'
+
+gameFile = if fs.existsSync("#{srcDir}game.coffee") then 'game' else 'main'
 
 players = null
 remotes = new Map
 
 cron = Cron()
 logger = Logger()
-
-title = env['npm_package_title'] ? 'no_title'
 
 playerScenesCollectionName = 'playerScene'
 
@@ -56,7 +55,7 @@ server = http.createServer()
 webSocketServer = new ws.Server {server}
 
 server.listen worldPort, 'localhost', ->
-  logger.info "#{title} running at http://localhost:#{gamePort}/"
+  logger.info "#{gameName} running at http://localhost:#{gamePort}/"
 
 engineDir = __dirname
 env.NODE_PATH = "#{engineDir}#{path.delimiter}#{env.NODE_PATH}"
@@ -70,18 +69,22 @@ startGame = (logger)->
     cookie = req.cookie = parseCookie req.headers.cookie
     if (uid = auth.getUid cookie)? then players.getByUID(uid) else null
 
-  router = Router env['npm_package_routerMaxPostLength'], obtainPlayer
+  router = Router 32000, obtainPlayer
+
+  config =
+    title: env['npm_package_title'] ? 'no_title'
+    startScene: env['npm_package_startScene'] ? 'start'
 
   {
     gameComponents, scenes, componentsConstructors, requiresSource
   } = loadGame {
     srcDir, gameFile, components: packageJson.components, load: require
-    env: NODE_ENV
+    env: NODE_ENV, config
   }
 
   {
     GamePage, refreshGamePagesHash
-  } = GamePageFactory env['npm_package_title'], env['npm_package_body'],
+  } = GamePageFactory config.title, env['npm_package_body'],
     env['npm_package_container'], getGamePagesHash
 
   playersCollection = storage.getRef [playerScenesCollectionName]
@@ -98,7 +101,7 @@ startGame = (logger)->
   constructGame gameComponents, scenes, componentsConstructors, Engine
 
   components = Components gameComponents, logger
-  goTo = GoTo storage, scenes, startScene, components, remotes, logger,
+  goTo = GoTo storage, scenes, config.startScene, components, remotes, logger,
     playerScenesCollectionName
   players = PlayerFactory gameComponents, goTo
 
