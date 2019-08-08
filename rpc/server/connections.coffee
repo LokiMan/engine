@@ -1,11 +1,11 @@
-timers = require '../common/timers'
-dates = require '../common/dates'
+timers = require '../../common/timers'
+dates = require '../../common/dates'
 
-Remote = require '../rpc/lib/remote'
+Remote = require '../lib/remote'
 
-ConnectionFactory = require '../rpc/server/connection'
-WebSocketState = require '../rpc/server/states/webSocket'
-SubscribeState = require '../rpc/server/states/subscribe'
+ConnectionFactory = require './connection'
+WebSocketState = require './states/webSocket'
+SubscribeState = require './states/subscribe'
 
 Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
   Connection = ConnectionFactory timers.wait

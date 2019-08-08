@@ -1,11 +1,11 @@
-dates = require '../common/dates'
-{RandomString} = require '../common/rand'
+dates = require '../../common/dates'
+{RandomString} = require '../../common/rand'
 
 UID_EXPIRES_3_YEARS = 1000 * 60 * 60 * 24 * 365 * 3
 
 UIDGenerator = (
   playersCollection, router, GamePage
-  cookieName = 'uid', expiresMSec = UID_EXPIRES_3_YEARS
+  {cookieName = 'uid', expires = UID_EXPIRES_3_YEARS} = {}
 )->
   randomString = RandomString playersCollection
 
@@ -16,9 +16,9 @@ UIDGenerator = (
       uid = randomString 20
 
       now = dates.now()
-      expires = dates.fromValue (now + expiresMSec)
+      expiresStr = dates.fromValue(now + expires).toUTCString()
       res.setHeader 'Set-Cookie', [
-        "#{cookieName}=#{uid}; expires=#{expires.toUTCString()}; HttpOnly=true"
+        "#{cookieName}=#{uid}; expires=#{expiresStr}; HttpOnly=true"
       ]
 
     res.end indexPage.render()

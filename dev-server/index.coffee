@@ -10,7 +10,7 @@ Development = require './packer/development'
 
 DevServer = (
   engineDir
-  {gamePort, gameFile, worldPort, requiresSource}
+  {entryPort, gameFile, corePort, requiresSource}
   reStartGame
 )->
   gameDir = process.cwd()
@@ -110,7 +110,7 @@ DevServer = (
 
   mount = st stOptions
 
-  proxyPort = worldPort
+  proxyPort = corePort
 
   proxy = httpProxy.createProxyServer {target: "http://localhost:#{proxyPort}"}
 
@@ -143,7 +143,7 @@ DevServer = (
         proxy.web req, res
 
   server = http.createServer onRequest
-  server.listen gamePort
+  server.listen entryPort
 
   wss = new ws.Server {server, path: '/dev'}
 
