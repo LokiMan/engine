@@ -8,7 +8,7 @@
     "babel-core": "6.26.3",
     "babel-plugin-transform-es2015-destructuring": "6.23.0",
     "chokidar": "2.1.1",
-    "coffeescript": "2.3.2",
+    "coffeescript": "2.4.1",
     "commander": "2.19.0",
     "concat-with-sourcemaps": "1.1.0",
     "http-proxy": "1.17.0",

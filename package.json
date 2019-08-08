@@ -6,9 +6,9 @@
     "postinstall": "cd dev-server && npm install"
   },
   "dependencies": {
-    "coffeescript": "2.3.2",
+    "coffeescript": "2.4.1",
     "later": "1.2.0",
-    "ws": "6.1.4"
+    "ws": "7.1.1"
   },
   "private": true
 }

@@ -2,7 +2,7 @@ coffee = require 'coffeescript'
 path = require 'path'
 
 loadGame = ({
-  srcDir, gameFile, components = {}, env, fs = require('fs'), load = (->{})
+  srcDir, gameFile, env, fs = require('fs'), load = (->{})
   config = {}
 })->
   gameComponents = {}
@@ -14,7 +14,7 @@ loadGame = ({
   loadComponentConstructor = (name)->
     return if componentsConstructors[name]?
 
-    if (relPath = components[name])?
+    if (relPath = config.components?[name])?
       pathTo = path.join (srcDir + '../'), relPath
 
       index = relPath.lastIndexOf '/'

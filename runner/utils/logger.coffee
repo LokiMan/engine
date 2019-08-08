@@ -1,5 +1,5 @@
-dates = require '../common/dates'
-pad = require '../common/pad'
+dates = require '../../common/dates'
+pad = require '../../common/pad'
 
 Logger = ->
   savedStacks = {}

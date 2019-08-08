@@ -1,24 +1,23 @@
 path = require 'path'
 fs = require 'fs'
 
-initStorage = (gameDir, packageJson, NODE_ENV)->
+initStorage = (gameDir, gameData, NODE_ENV)->
   dataDir = path.join gameDir, './data/'
 
   checkDataFile = ->
     dataFilePath = path.join dataDir, 'data.json'
     return true if fs.existsSync dataFilePath
-    return false if NODE_ENV isnt 'production' and NODE_ENV isnt 'test'
+    return false if NODE_ENV is 'local'
 
     fs.mkdirSync dataDir
     fs.writeFileSync dataFilePath, '{}', encoding: 'utf8'
     return true
 
-  if checkDataFile()
-    FilePersist = require '../persist/file/persist'
-    FilePersist dataDir
+  if gameData? or not checkDataFile()
+    Storage = require '../../storage/storage'
+    Storage gameData ? {}
   else
-    Storage = require '../storage/storage'
-    gameData = packageJson.data ? {}
-    Storage gameData
+    FilePersist = require '../../persist/file/persist'
+    FilePersist dataDir
 
 module.exports = initStorage
