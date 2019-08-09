@@ -79,6 +79,8 @@ Development = (engineDir, rootDir, entry)->
   devReloadSource = devReloadSource.replace '#path', devReloadSocketPath
   addSource 'devReload', '/', devReloadSource
 
+  devReloadCompiled = compiler.compile devReloadSource, 'devReload', bare: true
+
   source = fileReader.read path.join __dirname, '../../gui/index'
   guiFile = addSource 'gui', engineDir + '/gui/', source
 
@@ -155,5 +157,8 @@ gui = _require_(#{guiFile.index}); var {#{guiNames.join(',')}} = gui;"
       return false
 
   clients: []
+
+  getDevReloadJS: ->
+    devReloadCompiled
 
 module.exports = Development

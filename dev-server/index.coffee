@@ -140,6 +140,10 @@ DevServer = (
       else
         if needGameReload
           reloadGame()
+
+        if serverInError
+          return showErrorPage res, serverInError
+
         proxy.web req, res
 
   server = http.createServer onRequest
@@ -158,15 +162,32 @@ DevServer = (
       socket.on 'close', ->
         clients.splice clients.indexOf(socket), 1
 
-    if serverInError
-      socket.send 'Ошибка при загрузке ядра сервера:\n' + serverInError
-
   server.on 'upgrade', (req, socket, head)->
     if req.url is '/'
       proxy.ws req, socket, head
 
   add = (name, entryFile)->
     packers[name] = Development engineDir, srcDir, {path: entryFile, name}
+
+  showErrorPage = (res, error)->
+    script = packers.game.getDevReloadJS()
+
+    res.end """
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>ERROR</title>
+  <script>#{script}</script>
+  </head>
+  <body style='font-size: 15px'>
+    <pre><font color="red">
+      Ошибка при загрузке ядра сервера:<br/>
+      #{error.replace /\n/g, '<br/>'}
+    </font></pre>
+  </body>
+</html>
+"""
 
   {add}
 
