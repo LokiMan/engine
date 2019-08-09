@@ -65,11 +65,12 @@ scene 'first',
 
   it 'should use full path of external components', ->
     fakeFS =
-      readFileSync: -> 'components ext: true'
+      readFileSync: -> """
+config {components: ext: '../extProject/src/sub/comp'}
+components {ext: true}"""
       existsSync: spy -> true
-    components = ext: '../extProject/src/sub/comp'
 
-    loadGame {srcDir: '', fs: fakeFS, components}
+    loadGame {srcDir: '', fs: fakeFS}
 
     expect(fakeFS.existsSync.calls).to.eql [
       ['../../extProject/src/sub/comp/server/comp.coffee']
