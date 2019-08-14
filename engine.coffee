@@ -8,7 +8,7 @@ if not cmd?
 
 commands =
   run: ->
-    if process.NODE_ENV in ['production', 'test']
+    if process.env.NODE_ENV in ['production', 'test']
       require('./runner/run')()
     else
       require('./runner/devReload')()
