@@ -34,7 +34,7 @@ GamePageFactory = (
         begin
 
       if script?
-        first + "<script>#{script};</script>" + end
+        first + "    <script>#{script};</script>" + end
       else if subTitle?
         first + end
       else
@@ -93,7 +93,7 @@ font: 16px trebuchet ms, Tahoma, Arial, Helvetica, sans-serif; #{bodyStyle}">
       "/res/js/#{entry}-#{hash[entry]}"
     else
       "/js/#{entry}"
-    "<script type='text/javascript' src='#{entryName}.js'></script>"
+    "    <script type='text/javascript' src='#{entryName}.js'></script>"
 
   refreshGamePagesHash = ->
     hash = getHash()
