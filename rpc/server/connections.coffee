@@ -20,8 +20,6 @@ Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
   connectPlayer = (player, callback)->
     connection = connections.get player
 
-    needCallOnline = false
-
     if not connection?
       connection = Connection ->
         connections.delete player
@@ -36,22 +34,24 @@ Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
 
       remotes.set player, remote
 
-      needCallOnline = true
+      isNewConnection = true
     else
       if not connection.isClosed()
         connection.disconnect()
       remote = remotes.get player
 
+      isNewConnection = false
+
     callback connection
+
+    if isNewConnection
+      components.notifyGameComponents player, 'online'
+      components.callSceneComponents player, 'online'
 
     remote 'init', [
       components.gameComponentsToClient player
       components.sceneToClient player
     ]
-
-    if needCallOnline
-      components.notifyGameComponents player, 'online'
-      components.callSceneComponents player, 'online'
 
   webSocketServer.on 'connection', (socket, req)->
     if (player = obtainPlayer req)?
