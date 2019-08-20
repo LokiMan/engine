@@ -1,6 +1,7 @@
-EngineParts = (
-  {components, scenes, storage, router, cron, logger, auth, remotes, packFor}
-)-> (componentName)->
+EngineParts = ({
+  components, scenes, storage, router, cron, logger, auth, remotes, packFor
+  GamePage
+})-> (componentName)->
   remote = (player, command...)->
     remotes.get(player)?.callFor componentName, command
 
@@ -13,12 +14,13 @@ EngineParts = (
     cron
     logger
     auth
+    GamePage
 
     remote
 
     broadcast: (players, command...)->
       message = packFor componentName, command
-      for player in players
+      for player from players
         remotes.get(player)?.raw message
 
     broadcastOnline: (command...)->
@@ -29,7 +31,7 @@ EngineParts = (
     deSync: (player, args...)->
       msg = "deSync(#{player.id}, #{player.scene.id}.#{componentName}):"
       logger.info msg, args...
-      remotes.get(player)? 'reload'
+      remotes.get(player)? 'reSync'
   }
 
 module.exports = EngineParts

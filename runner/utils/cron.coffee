@@ -8,7 +8,7 @@ Cron = ->
   cron = (text, callback)->
     intervals.push later.setInterval callback, later.parse.text text
 
-  cron.reStart = ->
+  cron.clear = ->
     for interval in intervals
       interval.clear()
     intervals.length = 0

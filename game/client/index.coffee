@@ -35,7 +35,7 @@ Game = (componentsConstructors)->
 
     updateScene sceneInfo
 
-    _game = {updateScene, reload: -> window.location.reload()}
+    _game = {updateScene, reSync: -> window.location.reload()}
 
     document.onkeydown = (e)->
       for [name] in componentsInfo by -1

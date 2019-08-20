@@ -1,4 +1,6 @@
-heartbeat = (wss, interval)->
+{interval} = require '../../common/timers'
+
+heartbeat = (wss)->
   noop = (->)
 
   heartbeat = ->

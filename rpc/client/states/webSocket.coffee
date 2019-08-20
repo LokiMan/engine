@@ -6,8 +6,8 @@ WebSocketState = (connection, Reconnect)->
     socket.onmessage = ({data})->
       if data is 'disconnect'
         Reconnect.disconnect connection
-      else if data is 'ping'
-        socket.send 'pong'
+      else if data is 'reconnect'
+        Reconnect connection
       else
         connection.onMessage data
 

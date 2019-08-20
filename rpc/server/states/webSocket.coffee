@@ -18,4 +18,9 @@ WebSocketState = (connection, socket)->
     socket.send 'disconnect'
     socket.close()
 
+  connection.reconnect = ->
+    socket.removeListener 'close', onFinish
+    socket.send 'reconnect'
+    socket.close()
+
 module.exports = WebSocketState

@@ -7,6 +7,8 @@ Polling = (connection, ajax, Reconnect)->
     ajax.get '/connection' + arg, (response)->
       if response is 'disconnect'
         Reconnect.disconnect connection
+      else if response is 'reconnect'
+        Reconnect connection
       else
         if response isnt ''
           connection.onMessage response

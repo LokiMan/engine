@@ -1,11 +1,11 @@
-timers = require '../common/timers'
-dates = require '../common/dates'
+timers = require '../../common/timers'
+dates = require '../../common/dates'
 
-Remote = require '../rpc/lib/remote'
+Remote = require '../lib/remote'
 
-ConnectionFactory = require '../rpc/server/connection'
-WebSocketState = require '../rpc/server/states/webSocket'
-SubscribeState = require '../rpc/server/states/subscribe'
+ConnectionFactory = require './connection'
+WebSocketState = require './states/webSocket'
+SubscribeState = require './states/subscribe'
 
 Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
   Connection = ConnectionFactory timers.wait
@@ -19,8 +19,6 @@ Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
 
   connectPlayer = (player, callback)->
     connection = connections.get player
-
-    needCallOnline = false
 
     if not connection?
       connection = Connection ->
@@ -36,22 +34,24 @@ Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
 
       remotes.set player, remote
 
-      needCallOnline = true
+      isNewConnection = true
     else
       if not connection.isClosed()
         connection.disconnect()
       remote = remotes.get player
 
+      isNewConnection = false
+
     callback connection
+
+    if isNewConnection
+      components.notifyGameComponents player, 'online'
+      components.callSceneComponents player, 'online'
 
     remote 'init', [
       components.gameComponentsToClient player
       components.sceneToClient player
     ]
-
-    if needCallOnline
-      components.notifyGameComponents player, 'online'
-      components.callSceneComponents player, 'online'
 
   webSocketServer.on 'connection', (socket, req)->
     if (player = obtainPlayer req)?
@@ -83,5 +83,12 @@ Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
 
   router.head['/'] = (req, res)->
     res.end()
+
+  reconnectAll = ->
+    for connection from connections.values()
+      connection.reconnect()
+    connections.clear()
+
+  {reconnectAll}
 
 module.exports = Connections
