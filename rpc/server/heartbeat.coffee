@@ -1,10 +1,12 @@
 {interval} = require '../../common/timers'
+{nowDate} = require '../../common/dates'
 
 heartbeat = (wss)->
   noop = (->)
 
   heartbeat = ->
     @isAlive = true
+    @isAliveTime = nowDate().toISOString()
 
   wss.on 'connection', (ws)->
     ws.isAlive = true
