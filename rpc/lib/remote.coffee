@@ -1,4 +1,4 @@
-{nowDate} = require '../../common/dates'
+{formatYMDHMS} = require '../../common/dates'
 
 Remote = (connection, onCommand)->
   remote = (command...)->
@@ -21,7 +21,7 @@ Remote = (connection, onCommand)->
       _sendRaw Remote.packFor componentName, command
 
   connection.onMessage = (message)->
-    remote.lastTimeMessage = nowDate().toISOString()
+    remote.lastTimeMessage = formatYMDHMS()
 
     try
       command = JSON.parse message

@@ -57,7 +57,12 @@ Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
     if (player = obtainPlayer req)?
       connectPlayer player, (connection)->
         WebSocketState connection, socket
-        player.debugConnection = {socket, remote: remotes.get player}
+        player.debugConnection = {
+          socket
+          remote: remotes.get player
+          connected: dates.formatYMDHMS()
+          userAgent: req.headers['user-agent']
+        }
     else
       socket.close()
 
@@ -67,14 +72,28 @@ Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
     if (player = obtainPlayer req)?
       connectPlayer player, (connection)->
         subscribeState connection, res
-        player.debugConnection = {res, time: dates.nowDate().toISOString(), remote: remotes.get player}
+        player.debugConnection = {
+          remote: remotes.get player
+          connected: dates.formatYMDHMS()
+          userAgent: req.headers['user-agent']
+        }
     else
       res.end()
 
   router.get['/connection'] = (req, res)->
     if (connection = getConnection req)?
       subscribeState connection, res
-      player.debugConnection = {res, time: dates.nowDate().toISOString(), remote: remotes.get player}
+      player = obtainPlayer req
+      if player.debugConnection?
+        player.debugConnection.remote = remotes.get player
+        player.debugConnection.time = dates.formatYMDHMS()
+        player.debugConnection.userAgent = req.headers['user-agent']
+      else
+        player.debugConnection = {
+          remote: remotes.get player
+          time: dates.formatYMDHMS()
+          userAgent: req.headers['user-agent']
+        }
     else
       res.end()
 
