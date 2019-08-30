@@ -11,7 +11,8 @@ Generate = ->
 
   fs = require 'fs'
 
-  dirPath = "./src/#{name}"
+  srcPart = if fs.existsSync './src' then 'src/' else ''
+  dirPath = "./#{srcPart}#{name}"
   fs.mkdirSync dirPath
 
   file = (dir)->
