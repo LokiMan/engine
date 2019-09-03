@@ -1,5 +1,3 @@
-WebSocketState = require './webSocket'
-
 TryingWebSocket = (
   connection
   polling
