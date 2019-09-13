@@ -1,13 +1,5 @@
 WebSocketState = (connection, socket)->
-  prevMessageNum = 0
-
-  socket.on 'message', (messageData)->
-    {message, messageNum} = JSON.parse(messageData)
-
-    if messageNum != (prevMessageNum + 1)
-      console.error "ERROR MESSAGE ORDER: #{messageNum}, #{prevMessageNum}, #{message}"
-    prevMessageNum++
-
+  socket.on 'message', (message)->
     connection.onMessage message
 
   connection.flushBuffer (messages)->

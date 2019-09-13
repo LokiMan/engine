@@ -1,6 +1,4 @@
 WebSocketState = (connection, Reconnect)->
-  messageNum = 0
-
   connect = (socket)->
     socket.onerror = socket.onclose = ->
       Reconnect connection
@@ -14,8 +12,7 @@ WebSocketState = (connection, Reconnect)->
         connection.onMessage data
 
     connection.send = (message)->
-      messageNum++
-      socket.send JSON.stringify({message, messageNum})
+      socket.send message
 
   {connect}
 
