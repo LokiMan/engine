@@ -38,3 +38,8 @@ describe 'Path to regexp', ->
     result = pathToRegexp '/forum/:room/:page?'
 
     expect(result).to.eql /^\/forum\/(\w+)\/?(\w+)?\/?$/i
+
+  it "should create regexp to capture all symbols on flag '*'", ->
+    result = pathToRegexp '/:arg*'
+
+    expect(result).to.eql /^\/(.*)\/?$/i
