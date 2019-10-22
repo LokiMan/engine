@@ -1,3 +1,5 @@
+pad = require './pad'
+
 dates =
   now: ->
     Date.now()
@@ -13,6 +15,10 @@ dates =
 
   create: (year, month, date, hours, minutes, seconds, milliseconds)->
     new Date year, month, date, hours, minutes, seconds, milliseconds
+
+  formatYMDHMS: (d = new Date)->
+    "#{d.getFullYear()}-#{pad(d.getMonth() + 1)}-#{pad(d.getDate())}
+      #{pad(d.getHours())}:#{pad(d.getMinutes())}:#{pad(d.getSeconds())}"
 
   parseDuration: (text)->
     regExp = /(\d+) (\w{2}|\w)\w*/g
