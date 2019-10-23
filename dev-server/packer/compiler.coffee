@@ -9,7 +9,7 @@ Compiler = (preprocessContext = {})->
       if ext is 'js' then preprocessed else coffee.compile preprocessed, options
     catch e
       throw if e.location?
-        new ParseError e, content, scriptName + '.coffee'
+        new ParseError e, content, scriptName + '.' + ext
       else
         e
 

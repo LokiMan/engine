@@ -2,8 +2,7 @@
   "name": "chat",
   "version": "1.0.0",
   "description": "",
-  "title": "Чат",
   "scripts": {
-    "start": "node ../../node_modules/coffeescript/bin/coffee ../../runner.coffee 5320"
+    "start": "node ../../node_modules/coffeescript/bin/coffee ../../engine.coffee run"
   }
 }
