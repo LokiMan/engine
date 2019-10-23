@@ -47,10 +47,10 @@ DevServer = (
 
   watcher.on 'change', (filePath)->
     ext = path.extname filePath
-    if ext is '.coffee'
+    if ext in ['.coffee', '.js']
       found = false
 
-      pathName = filePath[... -'.coffee'.length]
+      pathName = filePath[... -ext.length]
 
       if pathName is gameFile
         found = true

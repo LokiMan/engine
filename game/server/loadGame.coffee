@@ -23,12 +23,12 @@ loadGame = ({
       [pathTo, nameFile] = findComponentDir name
 
     pathToServer = "#{pathTo}/server/#{nameFile}"
-    if fs.existsSync pathToServer + '.coffee'
+    if findComponent pathToServer
       componentConstructor = load pathToServer
 
-      if not fs.existsSync "#{pathTo}/client/#{nameFile}.coffee"
+      if not findComponent "#{pathTo}/client/#{nameFile}"
         componentConstructor.isServerOnly = true
-    else if fs.existsSync "#{pathTo}/client/#{nameFile}.coffee"
+    else if findComponent "#{pathTo}/client/#{nameFile}"
       componentConstructor = isClientOnly: true
     else
       throw new Error "Component '#{name}' not found."
@@ -40,6 +40,9 @@ loadGame = ({
       componentsRequires.push reqLine
 
     componentsConstructors[name] = componentConstructor
+
+  findComponent = (path)->
+    return fs.existsSync(path + '.coffee') or fs.existsSync(path + '.js')
 
   findComponentDir = (name)->
     pathName = name.replace /(?!^)_/g, '/'
