@@ -117,6 +117,8 @@ DevServer = (
   proxy.on 'error', (err, req, res)->
     res.end err.toString()
 
+  relativePathToEngine = path.relative srcDir, path.join(engineDir, '..')
+
   onRequest = (req, res)->
     mount req, res, ->
       url = req.url
@@ -124,7 +126,7 @@ DevServer = (
         if url[1..3] is 'js/'
           name = url['/js/'.length...-'.js'.length]
         else
-          name = '../..' + url[0 ... -'.js'.length]
+          name = relativePathToEngine + url[0 ... -'.js'.length]
 
         if (packer = packers[name])?
           res.setHeader 'Content-Type', 'application/javascript'
