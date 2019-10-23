@@ -2,7 +2,7 @@
 Ways = (ways, {remote})->
   Way = (name, i)->
     div ->
-      link html: way, click: ->
+      link html: name, click: ->
         # Отправляем команду на сервер, в функцию ways/$remotes$.way()
         remote 'way', i
 
