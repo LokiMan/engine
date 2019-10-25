@@ -60,7 +60,9 @@ scene 'first',
 
     expect(existsSpy.calls).to.eql [
       ['nested/levelTwo/andThree/server/andThree.coffee']
+      ['nested/levelTwo/andThree/server/andThree.js']
       ['nested/levelTwo/andThree/client/andThree.coffee']
+      ['nested/levelTwo/andThree/client/andThree.js']
     ]
 
   it 'should use full path of external components', ->
