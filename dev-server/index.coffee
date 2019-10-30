@@ -63,7 +63,7 @@ DevServer = (
         return if length < 3 # at least name/type/name
 
         if ['server', 'lib'].some (p)-> pathParts.includes p
-          componentPath = path.join srcDir, pathParts[0..(length - 3)].join('/')
+          componentPath = path.join srcDir, findComponentName pathParts
           for name in Object.keys require.cache
             if name.startsWith componentPath
               delete require.cache[name]
@@ -96,6 +96,17 @@ DevServer = (
 
         for client in clients
           client.send 'reload'
+
+  findComponentName = (pathParts)->
+    paths = [pathParts[0]]
+    index = 1
+    loop
+      next = pathParts[index]
+      if not next? or next in ['client', 'lib', 'server']
+        break
+      paths.push next
+      index++
+    return paths.join '/'
 
   stOptions =
     path: path.join gameDir, './res'
