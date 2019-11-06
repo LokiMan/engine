@@ -1,4 +1,4 @@
-timers = require '../../common/timers'
+{wait} = require '../../common/timers'
 
 Remote = require '../lib/remote'
 
@@ -7,7 +7,7 @@ WebSocketState = require './states/webSocket'
 SubscribeState = require './states/subscribe'
 
 Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
-  Connection = ConnectionFactory timers.wait
+  Connection = ConnectionFactory wait
   connections = new Map
 
   getConnection = (req)->
@@ -59,7 +59,7 @@ Connections = (webSocketServer, router, remotes, components, obtainPlayer)->
     else
       socket.close()
 
-  subscribeState = SubscribeState timers.wait
+  subscribeState = SubscribeState wait
 
   router.get['/connection/connect'] = (req, res)->
     if (player = obtainPlayer req)?
