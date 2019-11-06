@@ -5,7 +5,6 @@ ws = require 'ws'
 
 Connections = require '../rpc/server/connections'
 {packFor} = require '../rpc/lib/remote'
-heartbeat = require '../rpc/server/heartbeat'
 
 loadGame = require '../game/server/loadGame'
 GamePageFactory = require '../game/server/gamePage'
@@ -22,6 +21,7 @@ parseCookie = require './utils/parseCookie'
 Logger = require './utils/logger'
 initStorage = require './utils/initStorage'
 Cron = require './utils/cron'
+heartbeat = require './utils/heartbeat'
 
 PLAYER_SCENES_COLLECTION_NAME = 'playerScene'
 
