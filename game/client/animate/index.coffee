@@ -12,7 +12,14 @@ Animate = (
   intervalTimer = undefined
   requestID = undefined
 
-  wantToStop = []
+  wantToStop = [] #[[animation, needFinish]]
+
+  stop = -> # need call finish before removing animation
+    wantToStop.push [this, true]
+
+  #$ - need because break is keyword
+  break$ = -> # not need call finish before removing animation
+    wantToStop.push [this, false]
 
   update = (currentTime)->
     if wantToStop.length > 0
@@ -40,12 +47,6 @@ Animate = (
         ++i
 
     null
-
-  stop = ->
-    wantToStop.push [this, true]
-
-  _break = ->
-    wantToStop.push [this, false]
 
   requestUpdate = ->
     currentTime = timers.now()
@@ -81,7 +82,7 @@ Animate = (
       tick = ->
 
     animateObj = {
-      duration, startTime: now, tick, finish, stop, break: _break
+      duration, startTime: now, tick, finish, stop, break: break$
     }
 
     activeAnimations.push animateObj

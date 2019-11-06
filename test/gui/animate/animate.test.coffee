@@ -19,7 +19,8 @@ describe 'Animate', ->
     animate = Animate timers, fakeRaf
 
   it 'should call tick each frame', ->
-    animate duration: 100, tick: tick = spy()
+    tick = spy()
+    animate {duration: 100, tick}
 
     timers.tick 48
 
@@ -53,7 +54,8 @@ describe 'Animate', ->
 
     animate = Animate timers, fakeRaf
 
-    animate duration: 100, tick: tick = spy()
+    tick = spy()
+    animate {duration: 100, tick}
 
     timers.tick 1000
 
@@ -69,7 +71,8 @@ describe 'Animate', ->
 
     animate = Animate timers, fakeRaf
 
-    animate duration: 2000, tick: tick = spy()
+    tick = spy()
+    animate {duration: 2000, tick}
 
     timers.tick 1000
 
@@ -91,13 +94,35 @@ describe 'Animate', ->
 
       timers.tick 16
 
-      expect(obj.tick.calls[0][0].length).to.equal 2
+      expect(obj.tick.calls[0][0]).to.have.lengthOf 2
 
-  describe.skip 'stop', ->
+  describe 'stop', ->
+    it 'should remove animate on stop', ->
+      tick = spy()
+      animation = animate {duration: 100, tick}
+      timers.tick 16
+
+      animation.stop()
+      timers.tick 16
+
+      expect(tick.calls).to.have.lengthOf 1
+
     it 'should call finish from stopped animation', ->
       finish = spy()
-      animate {duration: 100, finish, tick: -> @stop()}
+      animation = animate 100, finish
 
+      timers.tick 16
+      animation.stop()
       timers.tick 16
 
       expect(finish.calls).to.not.empty
+
+    it 'should not call finish from break animation', ->
+      finish = spy()
+      animation = animate 100, finish
+
+      timers.tick 16
+      animation.break()
+      timers.tick 16
+
+      expect(finish.calls).to.be.empty
