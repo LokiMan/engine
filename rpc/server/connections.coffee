@@ -1,5 +1,4 @@
 timers = require '../../common/timers'
-dates = require '../../common/dates'
 
 Remote = require '../lib/remote'
 
