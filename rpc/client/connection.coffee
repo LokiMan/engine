@@ -1,6 +1,5 @@
 timers = require '../../common/timers'
-
-ajax = require './ajax'
+ajax = require '../../common/ajax'
 
 Polling = require './states/polling'
 WebSocketState = require './states/webSocket'
