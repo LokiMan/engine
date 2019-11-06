@@ -1,12 +1,10 @@
 {interval} = require '../../common/timers'
-{formatYMDHMS} = require '../../common/dates'
 
 heartbeat = (wss)->
   noop = (->)
 
   heartbeat = ->
     @isAlive = true
-    @isAliveTime = formatYMDHMS()
 
   wss.on 'connection', (ws)->
     ws.isAlive = true
