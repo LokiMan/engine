@@ -1,4 +1,4 @@
-{DISCONNECT_TIME} = require './config'
+DISCONNECT_TIME = 5000
 
 Connection = (wait)-> (onFinish)->
   buffer = []

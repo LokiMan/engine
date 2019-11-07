@@ -1,9 +1,9 @@
-{HEARTBEAT_TIME} = require '../config'
+REFRESH_TIME = 25000
 
 SubscribeState = (wait)-> (connection, res)->
   res.setHeader 'Content-Type', 'text/plain'
 
-  timer = wait HEARTBEAT_TIME, ->
+  timer = wait REFRESH_TIME, ->
     res.end()
 
   onFinish = ->
