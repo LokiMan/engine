@@ -23,10 +23,15 @@ FakeTimers = ->
 
   tick = (ms)->
     for [1..ms]
-      tickOneMs()
+      tickMs()
 
-  tickOneMs = ->
-    time++
+  tickByStep = (ms, step)->
+    count = Math.floor(ms / step)
+    for [1..count]
+      tickMs step
+
+  tickMs = (value = 1)->
+    time += value
 
     i = 0
     len = timers.length
@@ -52,6 +57,7 @@ FakeTimers = ->
     wait
     interval
     tick
+    tickByStep
     now
   }
 

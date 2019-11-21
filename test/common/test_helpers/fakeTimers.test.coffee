@@ -92,3 +92,8 @@ describe 'Fake timers', ->
     timers.tick 7
     result = timers.now()
     expect(result).to.equal 7
+
+  it 'should increment on set value in tick', ->
+    timers.interval 3, func
+    timers.tickByStep 10, 6
+    expect(func.calls).to.have.lengthOf 1
