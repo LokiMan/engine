@@ -1,24 +1,29 @@
-Polling = (connection, ajax, Reconnect)->
-  connect = ->
-    connection.send = send
-    subscribe '/connect'
+Polling = (onMessage, ajax, Reconnect, Disconnect)->
+  ->
+    cid = null
 
-  subscribe = (arg = '')->
-    ajax.get '/connection' + arg, (response)->
-      if response is 'disconnect'
-        Reconnect.disconnect connection
-      else if response is 'reconnect'
-        Reconnect connection
-      else
-        if response isnt ''
-          connection.onMessage response
-        subscribe()
-    , ->
-      Reconnect connection
+    req = ajax.get '/connection/connect', (response)->
+      cid = response[0...10]
+      onMessage response[10...]
+      subscribe()
+    , Reconnect
 
-  send = (message)->
-    ajax.post '/connection', {message}
+    subscribe = ->
+      req = ajax.get "/connection/#{cid}", (response)->
+        if response is 'disconnect'
+          Disconnect()
+        else if response is 'reconnect'
+          Reconnect()
+        else
+          if response isnt ''
+            onMessage response
+          subscribe()
+      , Reconnect
 
-  {connect, send}
+    abort: ->
+      req.abort()
+
+    send: (message)->
+      ajax.post "/connection/#{cid}", {message}
 
 module.exports = Polling

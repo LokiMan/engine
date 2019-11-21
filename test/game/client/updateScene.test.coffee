@@ -18,7 +18,7 @@ describe 'Update Scene', ->
       component = updateComponent: spy()
       scene = {}
       scene.component1 = component
-      updateScene = UpdateScene {}, scene, {}, {}, {}, {clearAll: ->}
+      updateScene = UpdateScene {}, scene, {}, {clearAll: ->}
 
       value = '123'
       updateScene [['component1', value]]

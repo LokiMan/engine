@@ -1,14 +1,8 @@
-initComponents = (constructors, components, remote, info, scene, gui)->
+initComponents = (constructors, components, info, Engine)->
   createComponent = (name, value)->
     constructor = constructors[name]
 
-    arg = {
-      components...
-      components
-      scene
-      gui
-      remote: remote.makeFor name
-    }
+    arg = Engine name
 
     if constructor.skipContainer
       component = constructor value, arg

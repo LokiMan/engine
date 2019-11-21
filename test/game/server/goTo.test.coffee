@@ -46,7 +46,7 @@ describe 'GoTo', ->
         components = callSceneComponents: spy(), sceneToClient: -> 'sceneData'
         scenes = {scene1: {id: 'scene1'}, scene2: {id: 'scene2'}}
         remote = spy()
-        goTo = GoTo storage, scenes, 'start', components, {get: -> remote}
+        goTo = GoTo storage, scenes, 'start', components, {get: -> send: remote}
         goTo.onPlayer player = {}
 
         player.goTo 'scene2'
@@ -58,4 +58,6 @@ describe 'GoTo', ->
 
         expect(storage.set.calls[0][1]).to.eql 'scene2'
 
-        expect(remote.calls).to.eql [['updateScene', 'sceneData']]
+        expect(remote.calls).to.eql [
+          [JSON.stringify ['updateScene', 'sceneData']]
+        ]

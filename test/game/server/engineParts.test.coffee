@@ -1,6 +1,6 @@
 spy = require '../../../common/test_helpers/spy'
 
-describe 'Engine', ->
+describe.skip 'Engine', ->
   EngineFactory = require '../../../game/server/engineParts'
 
   it 'should call remote callFor with name', ->
