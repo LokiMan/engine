@@ -1,13 +1,7 @@
-TryingWebSocket = (
-  connection
-  polling
-  webSocket
-  w = window
-  {wait} = require '../../../common/timers'
-)->
+TryingWebSocket = (wait, w, WebSocket, Polling)->
   Constructor = w.WebSocket ? w.MozWebSocket
   if not Constructor?
-    return polling.connect()
+    return Polling()
 
   try
     protocol = 'ws'
@@ -16,24 +10,21 @@ TryingWebSocket = (
 
     socket = new Constructor "#{protocol}://#{w.location.host}/"
   catch
-    return polling.connect()
+    return Polling()
 
   req = null
 
   timer = wait 3000, ->
-    if not req?
-      req = polling.connect()
+    req = Polling()
 
   socket.onerror = socket.onclose = ->
     timer.clear()
     if not req?
-      req = polling.connect()
+      req = Polling()
 
   socket.onopen = ->
     timer.clear()
     req?.abort()
-    webSocket.connect socket
-
-  connection.send = (->)
+    WebSocket socket
 
 module.exports = TryingWebSocket

@@ -16,7 +16,7 @@ Components = (gameComponents, logger)->
 
     return result
 
-  execute = (player, {target, action, args})->
+  execute = (player, target, action, args)->
     component = player.scene[target] ? gameComponents[target]
 
     if component?
@@ -25,16 +25,17 @@ Components = (gameComponents, logger)->
       catch e
         logger.exception e
 
-  notifyGameComponents = (player, functionName)->
+  notify = (player, action)->
     for component in listGameComponents
-      component[functionName]? player
-    return
+      component[action]? player
+
+    Components.callSceneComponents player, action
 
   {
     gameComponentsToClient, execute
     sceneToClient: Components.sceneToClient
     callSceneComponents: Components.callSceneComponents
-    notifyGameComponents
+    notify
   }
 
 Components.sceneToClient = (player, fromScene)->

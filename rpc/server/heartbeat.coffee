@@ -1,6 +1,6 @@
-{interval} = require '../../common/timers'
+HEARTBEAT_TIME = 30000
 
-heartbeat = (wss)->
+heartbeat = (wss, interval = require('../../common/timers').interval)->
   noop = (->)
 
   heartbeat = ->
@@ -10,7 +10,7 @@ heartbeat = (wss)->
     ws.isAlive = true
     ws.on 'pong', heartbeat
 
-  return interval 30000, ->
+  return interval HEARTBEAT_TIME, ->
     wss.clients.forEach (ws)->
       if ws.isAlive
         ws.isAlive = false

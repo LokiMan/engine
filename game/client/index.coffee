@@ -2,8 +2,9 @@ GameContainer = require './gameContainer'
 SceneContainer = require './sceneContainer'
 Animate = require './animate'
 
-Connection = require '../../rpc/client/connection'
-Remote = require '../../rpc/lib/remote'
+PackFor = require '../../rpc/lib/packFor'
+Rpc = require '../../rpc/client'
+EngineFactory = require './engineParts'
 UpdateScene = require './updateScene'
 initComponents = require './initComponents'
 
@@ -22,16 +23,18 @@ gui.animate = animate
 Game = (componentsConstructors)->
   _game = null
 
-  remote = Remote Connection(), ({target, action, args})->
+  send = Rpc gui, (target, action, args)->
     f = scene[target]?[action] ? gameComponents[target]?[action] ? _game[action]
     f? args...
 
-  init = ([componentsInfo, sceneInfo])->
-    initComponents componentsConstructors, gameComponents,
-      remote, componentsInfo, scene, gui
+  Engine = EngineFactory gameComponents, scene, gui, send, PackFor
 
-    updateScene = UpdateScene componentsConstructors, scene, remote,
-      sceneContainer, gameComponents, animate, gui
+  init = ([componentsInfo, sceneInfo])->
+    initComponents componentsConstructors, gameComponents, componentsInfo,
+      Engine
+
+    updateScene = UpdateScene componentsConstructors, scene, sceneContainer,
+      animate, Engine
 
     updateScene sceneInfo
 

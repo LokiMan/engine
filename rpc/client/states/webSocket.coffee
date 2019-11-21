@@ -1,19 +1,17 @@
-WebSocketState = (connection, Reconnect)->
-  connect = (socket)->
+WebSocketState = (onMessage, Reconnect, Disconnect)->
+  (socket)->
     socket.onerror = socket.onclose = ->
-      Reconnect connection
+      Reconnect()
 
     socket.onmessage = ({data})->
       if data is 'disconnect'
-        Reconnect.disconnect connection
+        Disconnect()
       else if data is 'reconnect'
-        Reconnect connection
+        Reconnect()
       else
-        connection.onMessage data
+        onMessage data
 
-    connection.send = (message)->
+    send: (message)->
       socket.send message
-
-  {connect}
 
 module.exports = WebSocketState

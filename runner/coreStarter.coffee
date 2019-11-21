@@ -3,9 +3,11 @@ fs = require 'fs'
 http = require 'http'
 ws = require 'ws'
 
-Connections = require '../rpc/server/connections'
-{packFor} = require '../rpc/lib/remote'
+ConnectWebSocket = require '../rpc/server/websocket'
 heartbeat = require '../rpc/server/heartbeat'
+ConnectPolling = require '../rpc/server/polling'
+PlayerConnection = require '../rpc/server/playerConnection'
+PackFor = require '../rpc/lib/packFor'
 
 loadGame = require '../game/server/loadGame'
 GamePageFactory = require '../game/server/gamePage'
@@ -43,7 +45,6 @@ CoreStarter = (getGamePagesHash = (-> null))->
   webSocketServer = new ws.Server {server}
 
   storage = null
-  remotes = new Map
   cron = Cron()
 
   startCore = ->
@@ -80,23 +81,30 @@ CoreStarter = (getGamePagesHash = (-> null))->
     playersCollection = storage.getRef [PLAYER_SCENES_COLLECTION_NAME]
     auth = UIDGenerator playersCollection, router, GamePage, config.uidGenerator
 
+    connections = new Map
+
     Engine = EngineFactory {
       components: gameComponents, scenes
-      storage, router, cron, logger, auth, remotes
-      packFor, GamePage
+      storage, router, cron, logger, auth, connections
+      PackFor, GamePage
     }
 
     constructGame gameComponents, scenes, componentsConstructors, Engine
 
     components = Components gameComponents, logger
-    goTo = GoTo storage, scenes, config.startScene, components, remotes, logger,
-      PLAYER_SCENES_COLLECTION_NAME
+    goTo = GoTo storage, scenes, config.startScene, components, connections,
+      logger, PLAYER_SCENES_COLLECTION_NAME
     players = PlayerFactory gameComponents, goTo
 
-    connections = Connections webSocketServer, router, remotes, components,
-      obtainPlayer
+    connectPlayer = PlayerConnection obtainPlayer, components, connections
+
+    ConnectWebSocket webSocketServer, connectPlayer
+    ConnectPolling router, connectPlayer
 
     hb = heartbeat webSocketServer
+
+    router.head['/'] = (req, res)-> # Server ready to get connections
+      res.end()
 
     server.on 'request', router
 
@@ -120,9 +128,15 @@ CoreStarter = (getGamePagesHash = (-> null))->
   server.listen corePort, 'localhost', ->
     logger.info "#{gameName} running at http://localhost:#{entryPort}/"
 
+  reconnectAll = ->
+    for connection from connections.values()
+      connection.send 'reconnect'
+      connection.close()
+    connections.clear()
+
   {
     engineDir, gameDir, entryPort, gameFile, corePort, requiresSource
-    cron, server, webSocketServer, router, hb, logger, config, connections
+    cron, server, webSocketServer, router, hb, logger, config, reconnectAll
     refreshGamePagesHash
     startCore
   }

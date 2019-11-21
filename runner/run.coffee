@@ -11,12 +11,12 @@ Run = ->
     JSON.parse hashJsonText
 
   {
-    router, connections, refreshGamePagesHash, entryPort, corePort
+    router, reconnectAll, refreshGamePagesHash, entryPort, corePort
   } = CoreStarter getGamePagesHash
 
   router.get['/__core/refreshHash'] = (req, res)->
     refreshGamePagesHash()
-    connections.reconnectAll()
+    reconnectAll()
     res.end 'ok.\r\n'
 
   {entryPort, corePort}

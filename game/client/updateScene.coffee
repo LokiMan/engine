@@ -1,7 +1,4 @@
-UpdateScene = (
-  componentsConstructors, scene, remote, sceneContainer, gameComponents,
-  animate, gui
-)->
+UpdateScene = (componentsConstructors, scene, sceneContainer, animate, Engine)->
   componentsContainers = {}
 
   updateComponent = (name, value)->
@@ -11,13 +8,8 @@ UpdateScene = (
       if (container = componentsContainers[name])?
         container.remove()
 
-      arg = {
-        gameComponents...
-        components: gameComponents
-        scene
-        gui
-        remote: remote.makeFor name
-      }
+      arg = Engine name
+
       componentConstructor = componentsConstructors[name]
 
       if componentConstructor.skipContainer
