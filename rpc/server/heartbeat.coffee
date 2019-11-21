@@ -1,6 +1,6 @@
 HEARTBEAT_TIME = 30000
 
-heartbeat = (wss, interval = require('../../common/timers').interval)->
+Heartbeat = (wss, {interval} = require('../../common/timers'))->
   noop = (->)
 
   heartbeat = ->
@@ -18,4 +18,4 @@ heartbeat = (wss, interval = require('../../common/timers').interval)->
       else
         ws.terminate()
 
-module.exports = heartbeat
+module.exports = Heartbeat
