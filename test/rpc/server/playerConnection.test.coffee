@@ -143,7 +143,7 @@ describe 'Player Connection', ->
       {transport, player} = createTransportConnection {components}
 
       transport.close()
-      fakeTimers.tick 5000
+      fakeTimers.tickByStep 5000, 1000
 
       expect(components.notify.calls[1]).to.eql [player, 'offline']
 
@@ -157,7 +157,7 @@ describe 'Player Connection', ->
       transport.close()
 
       createTransport()
-      fakeTimers.tick 5000
+      fakeTimers.tickByStep 5000, 1000
 
       expect(components.notify.calls).to.eql [[player, 'online']]
 

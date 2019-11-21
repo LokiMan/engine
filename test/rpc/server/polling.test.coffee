@@ -75,7 +75,7 @@ describe 'Polling server', ->
       {router, cid} = connectPolling()
       router.get['/connection/:cid'] {params: {cid}}, res = {end: spy(), on: ->}
 
-      fakeTimers.tick 25000
+      fakeTimers.tickByStep 25000, 5000
 
       expect(res.end.calls).to.not.empty
 
@@ -94,7 +94,7 @@ describe 'Polling server', ->
       router.get['/connection/:cid'] {params: {cid}}, res
 
       connection.send '1'
-      fakeTimers.tick 25000
+      fakeTimers.tickByStep 25000, 5000
 
       expect(res.end.calls).to.have.lengthOf 1
 
@@ -130,7 +130,7 @@ describe 'Polling server', ->
     it 'should close connection after 5 sec in buffered', ->
       {connection} = connectPolling()
 
-      fakeTimers.tick 5000
+      fakeTimers.tickByStep 5000, 1000
 
       expect(connection.onClose.calls).to.not.empty
 
@@ -166,7 +166,7 @@ describe 'Polling server', ->
       router.get['/connection/:cid'] {params: {cid}}, createRes()
       connection.send '1'
 
-      fakeTimers.tick 5000
+      fakeTimers.tickByStep 5000, 1000
 
       expect(connection.onClose.calls).to.not.empty
 
