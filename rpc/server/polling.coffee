@@ -10,15 +10,7 @@ Polling = (
 
   randomString = RandomString pollings
 
-  _toBuffered = (polling, cid)->
-    {connection, buffer} = polling
-
-    connection.close = ->
-      delete pollings[cid]
-      connection.onClose()
-
-    polling.timer = wait DISCONNECT_TIME, connection.close
-
+  _toBuffered = ({connection, buffer})->
     connection.send = (message)->
       buffer.push message
 
@@ -32,21 +24,28 @@ Polling = (
     connection = {
       send: (message)->
         _send res, cid + message
-        _toBuffered polling, cid
+        _toBuffered polling
+
+      close: ->
+        delete pollings[cid]
+        connection.onClose()
     }
 
     polling = {
       connection
       buffer: []
+      timer: wait DISCONNECT_TIME, connection.close
     }
 
     pollings[cid] = polling
 
+    savedSend = connection.send
+
     onConnect connection, req
 
-    if not polling.timer? # not sent init on connect
+    if connection.send is savedSend # not send() on connect
       _send res, cid
-      _toBuffered polling, cid
+      _toBuffered polling
 
   router.get['/connection/:cid'] = (req, res)->
     {cid} = req.params
@@ -54,16 +53,15 @@ Polling = (
     if (polling = pollings[cid])?
       {buffer, timer, connection} = polling
 
+      timer.reStart()
+
       if buffer.length > 0
         if buffer.length is 1
           res.end buffer[0]
         else
           res.end "[#{buffer.toString()}]"
         buffer.length = 0
-        timer.reStart()
       else
-        timer.clear()
-
         onClose = ->
           connection.onClose()
 
@@ -76,7 +74,7 @@ Polling = (
           res.removeListener 'close', onClose
           _send res, message
 
-          _toBuffered polling, cid
+          _toBuffered polling
     else
       res.end()
 
