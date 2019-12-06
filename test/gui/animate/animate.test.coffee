@@ -126,3 +126,17 @@ describe 'Animate', ->
       timers.tick 16
 
       expect(finish.calls).to.be.empty
+
+  describe 'removeBy', ->
+    it 'should remove animations by component name', ->
+      finish = spy()
+      animate {duration: 100, finish}
+      animate {duration: 100}, finish, 'name1'
+      animate 100, finish
+      animate 100, finish, 'name1'
+      animate.fromTo {duration: 100, finish}, 'name1'
+
+      animate.removeBy 'name1'
+      timers.tick 112
+
+      expect(finish.calls).to.have.lengthOf 2

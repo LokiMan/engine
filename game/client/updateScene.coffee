@@ -25,8 +25,6 @@ UpdateScene = (componentsConstructors, scene, sceneContainer, animate, Engine)->
       scene[name] = component
 
   (components)->
-    animate.clearAll()
-
     componentsObj = {}
     for [name, value] in components
       componentsObj[name] = value
@@ -35,7 +33,8 @@ UpdateScene = (componentsConstructors, scene, sceneContainer, animate, Engine)->
 
     for name, component of scene
       if not componentsObj[name]?
-        scene[name].removeComponent?()
+        component.removeComponent?()
+        animate.removeBy name
         delete scene[name]
         if (container = componentsContainers[name])?
           container.remove()

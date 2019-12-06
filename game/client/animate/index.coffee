@@ -1,7 +1,5 @@
 lerp = require '../../../common/math/lerp'
 
-TICK_MS_IN_PAUSE = 50
-
 Animate = (
   timers = require '../../../common/timers'
   raf = (require './raf') window, timers
@@ -17,7 +15,7 @@ Animate = (
   stop = -> # need call finish before removing animation
     wantToStop.push [this, true]
 
-  #$ - need because break is keyword
+  #$ - need because 'break' is a keyword
   break$ = -> # not need call finish before removing animation
     wantToStop.push [this, false]
 
@@ -59,7 +57,7 @@ Animate = (
     else
       intervalTimer.clear()
 
-  animate = (duration, finish)->
+  animate = (duration, finish, componentName)->
     now = timers.now()
 
     if activeAnimations.length == 0
@@ -83,13 +81,16 @@ Animate = (
 
     animateObj = {
       duration, startTime: now, tick, finish, stop, break: break$
+      componentName
     }
 
     activeAnimations.push animateObj
 
     return animateObj
 
-  animate.fromTo = ({duration, from, to, tick: originalTick, finish})->
+  animate.fromTo = (
+    {duration, from, to, tick: originalTick, finish}, componentName
+  )->
     if Array.isArray from
       tick = (t)->
         originalTick (lerp(from[i], e, t) for e, i in to)
@@ -97,13 +98,13 @@ Animate = (
       tick = (t)->
         originalTick lerp from, to, t
 
-    animate {duration, tick, finish}
+    animate {duration, tick, finish}, undefined, componentName
 
-  animate.clearAll = ->
-    activeAnimations.length = 0
-    intervalTimer?.clear()
-    if requestID?
-      raf.cancel requestID
+  animate.removeBy = (componentName)->
+    for anim in activeAnimations
+      if anim.componentName is componentName
+        anim.break()
+    return
 
   return animate
 
