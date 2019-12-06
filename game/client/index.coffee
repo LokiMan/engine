@@ -17,9 +17,6 @@ gui.gameContainer = GameContainer gameContainerGuiElement, gui.isStandalone
 sceneContainer = SceneContainer scene, gameComponents
 gui.sceneContainer = sceneContainer
 
-animate = Animate()
-gui.animate = animate
-
 Game = (componentsConstructors)->
   _game = null
 
@@ -27,7 +24,8 @@ Game = (componentsConstructors)->
     f = scene[target]?[action] ? gameComponents[target]?[action] ? _game[action]
     f? args...
 
-  Engine = EngineFactory gameComponents, scene, gui, send, PackFor
+  animate = Animate()
+  Engine = EngineFactory gameComponents, scene, gui, animate, send, PackFor
 
   init = ([componentsInfo, sceneInfo])->
     initComponents componentsConstructors, gameComponents, componentsInfo,
