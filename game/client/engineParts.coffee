@@ -1,4 +1,4 @@
-EngineParts = (components, scene, gui, animate, send, PackFor)->
+EngineParts = (components, scene, gui, animate, send, PackFor, common)->
   (componentName)->
     packFor = PackFor componentName
 
@@ -16,6 +16,7 @@ EngineParts = (components, scene, gui, animate, send, PackFor)->
       components
       scene
       gui
+      common
       remote: (command...)-> send packFor command
       animate: componentAnimate
     }

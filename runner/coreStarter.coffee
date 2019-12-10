@@ -3,6 +3,10 @@ fs = require 'fs'
 http = require 'http'
 ws = require 'ws'
 
+rand = require '../common/rand'
+dates = require '../common/dates'
+Timers = require '../common/timers'
+
 ConnectWebSocket = require '../rpc/server/websocket'
 heartbeat = require '../rpc/server/heartbeat'
 ConnectPolling = require '../rpc/server/polling'
@@ -44,6 +48,9 @@ CoreStarter = (getGamePagesHash = (-> null))->
   server = http.createServer()
   webSocketServer = new ws.Server {server}
 
+  timers = Timers global
+  {wait, interval} = timers
+
   storage = null
   cron = Cron()
 
@@ -79,14 +86,17 @@ CoreStarter = (getGamePagesHash = (-> null))->
       getGamePagesHash
 
     playersCollection = storage.getRef [PLAYER_SCENES_COLLECTION_NAME]
-    auth = UIDGenerator playersCollection, router, GamePage, config.uidGenerator
+    auth = UIDGenerator playersCollection, router, GamePage, dates,
+      rand.RandomString, config.uidGenerator
 
     connections = new Map
+
+    common = {rand, dates, timers}
 
     Engine = EngineFactory {
       components: gameComponents, scenes
       storage, router, cron, logger, auth, connections
-      PackFor, GamePage
+      PackFor, GamePage, common
     }
 
     constructGame gameComponents, scenes, componentsConstructors, Engine
@@ -96,12 +106,12 @@ CoreStarter = (getGamePagesHash = (-> null))->
       logger, PLAYER_SCENES_COLLECTION_NAME
     players = PlayerFactory gameComponents, goTo
 
-    connectPlayer = PlayerConnection obtainPlayer, components, connections
+    connectPlayer = PlayerConnection obtainPlayer, components, connections, wait
 
     ConnectWebSocket webSocketServer, connectPlayer
-    ConnectPolling router, connectPlayer
+    ConnectPolling router, connectPlayer, wait, rand.RandomString
 
-    hb = heartbeat webSocketServer
+    hb = heartbeat webSocketServer, interval
 
     router.head['/'] = (req, res)-> # Server ready to get connections
       res.end()

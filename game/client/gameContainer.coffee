@@ -6,9 +6,9 @@ MIN_HEIGHT = 748
 GameContainer = (
   guiElement
   isStandalone
+  {wait}
   w = window
   document = w.document
-  timers = (require '../../common/timers')
 )->
   calcHeight = ->
     Math.max MIN_HEIGHT, document.documentElement.clientHeight
@@ -38,7 +38,7 @@ GameContainer = (
   onResize = ->
     timerResize?.clear()
 
-    timerResize = timers.wait 100, ->
+    timerResize = wait 100, ->
       height = calcHeight()
 
       if height isnt prevHeight

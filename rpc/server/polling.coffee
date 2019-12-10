@@ -1,11 +1,7 @@
 DISCONNECT_TIME = 5000
 REFRESH_TIME = 25000
 
-Polling = (
-  router, onConnect
-  RandomString = (require '../../common/rand').RandomString
-  wait = (require '../../common/timers').wait
-)->
+Polling = (router, onConnect, wait, RandomString)->
   pollings = Object.create null
 
   randomString = RandomString pollings

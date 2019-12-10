@@ -9,10 +9,10 @@ UIPanes = require './uiPanes'
 
 Rpc = (
   gui
+  ajax
+  {wait, interval}
+  rand
   onCommand
-  {wait, interval} = (require '../../common/timers')
-  ajax = require '../../common/ajax'
-  rand = require '../../common/rand'
   w = window
 )->
   unpackAndRun = UnpackAndRun onCommand

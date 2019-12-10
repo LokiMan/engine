@@ -1,6 +1,6 @@
 HEARTBEAT_TIME = 30000
 
-Heartbeat = (wss, {interval} = require('../../common/timers'))->
+Heartbeat = (wss, interval)->
   noop = (->)
 
   heartbeat = ->

@@ -1,42 +1,41 @@
-isLocalStorageSupported = (storage)->
-  testKey = 'test'
-  try
-    storage.setItem testKey, '1'
-    storage.removeItem testKey
-    return true
-  catch
-    return false
+LocalStorage = (storage = window['localStorage'])->
+  isLocalStorageSupported = ->
+    return false if not storage?
 
-storage = window['localStorage']
+    testKey = 'test'
+    try
+      storage.setItem testKey, '1'
+      storage.removeItem testKey
+      return true
+    catch
+      return false
 
-if not storage? or not isLocalStorageSupported storage
-  storage = do ->
-    items = {}
-    {
-      setItem: (key, value) ->
-        items[key] = value
-      getItem: (key) ->
-        items[key]
-      removeItem: (key) ->
-        delete items[key]
-    }
+  if not isLocalStorageSupported()
+    storage = do ->
+      items = {}
+      {
+        setItem: (key, value) ->
+          items[key] = value
+        getItem: (key) ->
+          items[key]
+        removeItem: (key) ->
+          delete items[key]
+      }
 
-LocalStorage =
-  get: (key)->
+  get = (key)->
     str = storage.getItem key
-
-    if typeof str != 'string'
-      return undefined
 
     try
       return JSON.parse str
     catch
-      return str ? undefined
+      return str
 
-  set: (key, value)->
+  set = (key, value)->
     storage.setItem key, JSON.stringify value
 
-  remove: (key)->
+  remove = (key)->
     storage.removeItem key
+
+  {get, set, remove}
 
 module.exports = LocalStorage

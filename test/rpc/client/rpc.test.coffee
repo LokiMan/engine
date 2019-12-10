@@ -33,7 +33,7 @@ describe 'Client Rpc', ->
 
   describe 'Connecting', ->
     createRpc = (_w = w)->
-      Rpc gui, onCommand, fakeTimers, ajax, rand, _w
+      Rpc gui, ajax, fakeTimers, rand, onCommand, _w
 
     createWebSocket = ->
       send = createRpc()

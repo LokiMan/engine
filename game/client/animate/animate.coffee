@@ -1,9 +1,6 @@
 lerp = require '../../../common/math/lerp'
 
-Animate = (
-  timers = require '../../../common/timers'
-  raf = (require './raf') window, timers
-)->
+Animate = (raf, now, interval)->
   activeAnimations = []
   lastTime = 0
 
@@ -47,7 +44,7 @@ Animate = (
     null
 
   requestUpdate = ->
-    currentTime = timers.now()
+    currentTime = now()
     lastTime = currentTime
 
     update currentTime
@@ -58,14 +55,14 @@ Animate = (
       intervalTimer.clear()
 
   animate = (duration, finish, componentName)->
-    now = timers.now()
+    startTime = now()
 
     if activeAnimations.length == 0
-      lastTime = now
+      lastTime = startTime
       requestID = raf.request requestUpdate
 
-      intervalTimer = timers.interval 1000, ->
-        currentTime = timers.now()
+      intervalTimer = interval 1000, ->
+        currentTime = now()
         elapsedTime = currentTime - lastTime
         if elapsedTime > 500
           update currentTime
@@ -80,7 +77,7 @@ Animate = (
       tick = ->
 
     animateObj = {
-      duration, startTime: now, tick, finish, stop, break: break$
+      duration, startTime, tick, finish, stop, break: break$
       componentName
     }
 

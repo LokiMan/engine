@@ -1,6 +1,6 @@
 EngineParts = ({
   components, scenes, storage, router, cron, logger, auth, connections, PackFor
-  GamePage
+  GamePage, common
 })-> (componentName)->
   packFor = PackFor componentName
 
@@ -17,6 +17,7 @@ EngineParts = ({
     logger
     auth
     GamePage
+    common
 
     remote
 

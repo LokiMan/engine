@@ -1,31 +1,56 @@
-GameContainer = require './gameContainer'
-SceneContainer = require './sceneContainer'
-Animate = require './animate'
-
 PackFor = require '../../rpc/lib/packFor'
 Rpc = require '../../rpc/client'
+LocalStorage = require '../../common/localStorage'
+Ajax = require '../../common/ajax'
+dates = require '../../common/dates'
+Timers = require '../../common/timers'
+rand = require '../../common/rand'
+
+GameContainer = require './gameContainer'
+SceneContainer = require './sceneContainer'
+Raf = require './animate/raf'
+Animate = require './animate/animate'
 EngineFactory = require './engineParts'
 UpdateScene = require './updateScene'
 initComponents = require './initComponents'
 
-scene = {}
-gameComponents = {}
-
-gameContainerGuiElement = gui.GuiElement document.body.firstElementChild
-gui.gameContainer = GameContainer gameContainerGuiElement, gui.isStandalone
-
-sceneContainer = SceneContainer scene, gameComponents
-gui.sceneContainer = sceneContainer
-
 Game = (componentsConstructors)->
+  scene = {}
+  gameComponents = {}
+
+  perf = window.performance
+  if perf? and (perfNow = (perf.now or perf.webkitNow))?
+    now = perfNow.bind perf
+  else
+    now = dates.now
+
+  timers = Timers window
+
+  gameContainerGui = gui.GuiElement document.body.firstElementChild
+  gui.gameContainer = GameContainer gameContainerGui, gui.isStandalone, timers
+
+  sceneContainer = SceneContainer scene, gameComponents
+  gui.sceneContainer = sceneContainer
+
   _game = null
 
-  send = Rpc gui, (target, action, args)->
+  localStorage = LocalStorage()
+  ajax = Ajax()
+
+  send = Rpc gui, ajax, timers, rand, (target, action, args)->
     f = scene[target]?[action] ? gameComponents[target]?[action] ? _game[action]
     f? args...
 
-  animate = Animate()
-  Engine = EngineFactory gameComponents, scene, gui, animate, send, PackFor
+  raf = Raf now, timers.wait
+  animate = Animate raf, now, timers.interval
+
+  Engine = EngineFactory gameComponents, scene, gui, animate, send, PackFor, {
+    dates
+    timers
+    ajax
+    localStorage
+    rand
+  }
 
   init = ([componentsInfo, sceneInfo])->
     initComponents componentsConstructors, gameComponents, componentsInfo,

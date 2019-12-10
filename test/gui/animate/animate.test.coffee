@@ -2,7 +2,7 @@ FakeTimers = require '../../../common/test_helpers/fakeTimers'
 spy = require '../../../common/test_helpers/spy'
 
 describe 'Animate', ->
-  Animate = require '../../../game/client/animate/index'
+  Animate = require '../../../game/client/animate/animate'
   lerp = require '../../../common/math/lerp'
 
   timers = undefined
@@ -16,7 +16,7 @@ describe 'Animate', ->
         timers.wait 16, callback
     }
 
-    animate = Animate timers, fakeRaf
+    animate = Animate fakeRaf, timers.now, timers.interval
 
   it 'should call tick each frame', ->
     tick = spy()
@@ -52,7 +52,7 @@ describe 'Animate', ->
         timer.clear()
     }
 
-    animate = Animate timers, fakeRaf
+    animate = Animate fakeRaf, timers.now, timers.interval
 
     tick = spy()
     animate {duration: 100, tick}
@@ -69,7 +69,7 @@ describe 'Animate', ->
         timers.wait +Infinity, callback
     }
 
-    animate = Animate timers, fakeRaf
+    animate = Animate fakeRaf, timers.now, timers.interval
 
     tick = spy()
     animate {duration: 2000, tick}

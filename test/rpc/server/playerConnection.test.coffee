@@ -58,7 +58,7 @@ describe 'Player Connection', ->
     wait = fakeTimers.wait
     connectPlayer = PlayerConnection obtainPlayer, components, connections, wait
     router = {get: {}, post: {}}
-    Polling router, connectPlayer, undefined, wait
+    Polling router, connectPlayer, wait, (-> -> '1234567890')
 
     createTransport = ->
       transport = send: spy(), close: (-> res2.end())

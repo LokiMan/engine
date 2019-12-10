@@ -10,9 +10,10 @@ describe 'Polling server', ->
     fakeTimers = FakeTimers()
 
   createPolling = ({
-    router = {get: {}, post: {}}, onConnect = (->), RandomString
+    router = {get: {}, post: {}}, onConnect = (->)
+    RandomString = (-> -> '1234567890')
   } = {})->
-    Polling router, onConnect, RandomString, fakeTimers.wait
+    Polling router, onConnect, fakeTimers.wait, RandomString
     {router}
 
   connectPolling = ->

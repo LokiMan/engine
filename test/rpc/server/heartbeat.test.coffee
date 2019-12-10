@@ -26,7 +26,7 @@ describe 'Heartbeat', ->
       wss.clients.push ws
       return ws
 
-    Heartbeat wss, fakeTimers
+    Heartbeat wss, fakeTimers.interval
 
     ws1 = connect()
     ws2 = connect()

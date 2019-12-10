@@ -2,10 +2,7 @@ UnpackAndRun = require '../lib/unpackAndRun'
 
 TIME_TO_OFFLINE = 5000
 
-PlayerConnection = (
-  obtainPlayer, components, connections
-  wait = (require '../../common/timers').wait
-)->
+PlayerConnection = (obtainPlayer, components, connections, wait)->
   onMessages = new Map()
   offlineTimers = new Map()
 

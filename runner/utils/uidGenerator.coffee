@@ -1,10 +1,7 @@
-dates = require '../../common/dates'
-{RandomString} = require '../../common/rand'
-
 UID_EXPIRES_3_YEARS = 1000 * 60 * 60 * 24 * 365 * 3
 
 UIDGenerator = (
-  playersCollection, router, GamePage
+  playersCollection, router, GamePage, dates, RandomString
   {cookieName = 'uid', expires = UID_EXPIRES_3_YEARS} = {}
 )->
   randomString = RandomString playersCollection
