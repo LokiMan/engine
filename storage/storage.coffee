@@ -33,16 +33,14 @@ Storage = (
     return getRef(path)?
 
   update = (path, object)->
-    copyObject = cloneDeep object
-
     obj = rootData
     for k in path
       obj = obj[k]
 
-    for name, value of copyObject
+    for name, value of object
       obj[name] = cloneDeep value
 
-    onChange 'update', path, copyObject
+    onChange 'update', path, object
 
     return
 

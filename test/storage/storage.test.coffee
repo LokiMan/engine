@@ -126,15 +126,6 @@ describe 'Storage', ->
         ['update', ['pa', 'th'], {b: 2, d: '4'}]
       ]
 
-    it 'should cloneDeep obtain object', ->
-      spyClone = spy()
-      storage = Storage {pa: th: {a: 1, b: 1, c: 1, d: 1}}, (->), spyClone
-      updObject = {b: 2, d: '4'}
-
-      storage.update ['pa', 'th'], updObject
-
-      expect(spyClone.calls[0][0]).to.equal updObject
-
     it 'should not call onChange if path not exists', ->
       onChange = spy()
       storage = createStorage {pa: th: {a: 1, b: 1, c: 1, d: 1}}, onChange
