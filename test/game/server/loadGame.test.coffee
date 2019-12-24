@@ -62,13 +62,13 @@ scene 'first',
     existsSpy = spy -> false
 
     try
-      readGame 'components nested_levelTwo_andThree: true', existsSpy
+      readGame 'components nested_moreNested_component: true', existsSpy
 
     expect(existsSpy.calls).to.eql [
-      ['nested/levelTwo/andThree/server/andThree.coffee']
-      ['nested/levelTwo/andThree/server/andThree.js']
-      ['nested/levelTwo/andThree/client/andThree.coffee']
-      ['nested/levelTwo/andThree/client/andThree.js']
+      ['nested/moreNested/component/server/component.coffee']
+      ['nested/moreNested/component/server/component.js']
+      ['nested/moreNested/component/client/component.coffee']
+      ['nested/moreNested/component/client/component.js']
     ]
 
   it 'should use full path of external components', ->
