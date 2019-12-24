@@ -11,11 +11,11 @@ describe 'Read Game', ->
     loadGame srcDir: '', fs: fakeFS
 
   it 'should read game components if they set', ->
-    result = readGame """
+    result = readGame '''
 components
   first: true
   second: {}
-"""
+'''
 
     expect(result.gameComponents).to.eql {
       first: true
