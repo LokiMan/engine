@@ -27,6 +27,12 @@ components
 
     expect(result.gameComponents).to.eql {}
 
+  it 'should throw if not found component', ->
+    fn = ->
+      readGame 'components notFound: 1', -> false
+
+    expect(fn).to.throw 'not found'
+
   it 'should read scenes if they set', ->
     result = readGame """
 scene 'first',
