@@ -7,8 +7,9 @@ describe 'Construct Game', ->
     value = {a: 1}
     constructorSpy = spy()
     enginePart = {}
+    Engine = -> enginePart
 
-    constructGame {name: value}, {}, {name: constructorSpy}, -> enginePart
+    constructGame {name: value}, {}, {name: constructor: constructorSpy}, Engine
 
     expect(constructorSpy.calls).to.deep.equal [[value, enginePart]]
 
@@ -35,7 +36,8 @@ describe 'Construct Game', ->
     enginePart = {}
     Engine = -> enginePart
 
-    constructGame {}, {scene1: {name: value}}, {name: constructorSpy}, Engine
+    constructGame {}, {scene1: {name: value}},
+      {name: constructor: constructorSpy}, Engine
 
     expect(constructorSpy.calls).to.deep.equal [[enginePart], [value]]
 
@@ -54,13 +56,10 @@ describe 'Construct Game', ->
     component2 = (->)
     component3 = (->)
 
-    component2Factory = -> component2
-    component2Factory.isServerOnly = true
-
     constructGame {}, scenes, {
-      name1: -> -> component1
-      name2: component2Factory
-      name3: -> -> component3
+      name1: constructor: -> -> component1
+      name2: isServerOnly: true, constructor: -> -> component2
+      name3: constructor: -> -> component3
     }, -> {}
 
     expect(scenes.scene1.toClient).to.deep.equal [
