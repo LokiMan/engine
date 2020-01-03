@@ -1,12 +1,12 @@
 constructGame = (gameComponents, scenes, componentsConstructors, Engine)->
   # game components
   createGameComponent = (name, value)->
-    componentConstructor = componentsConstructors[name]
+    component = componentsConstructors[name]
 
-    return if componentConstructor.isClientOnly
+    return if component.isClientOnly
       toClient: -> value
     else
-      componentConstructor value, (Engine name)
+      component.constructor value, (Engine name)
 
   for name, value of gameComponents
     gameComponents[name] = createGameComponent name, value
@@ -17,11 +17,11 @@ constructGame = (gameComponents, scenes, componentsConstructors, Engine)->
 
   createSceneComponent = (name, value)->
     if not (constructor = sceneComponentsConstructors[name])?
-      componentConstructor = componentsConstructors[name]
-      constructor = if componentConstructor.isClientOnly
+      component = componentsConstructors[name]
+      constructor = if component.isClientOnly
         -> toClient: -> value
       else
-        componentConstructor (Engine name)
+        component.constructor (Engine name)
       sceneComponentsConstructors[name] = constructor
 
     constructor value

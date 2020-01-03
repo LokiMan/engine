@@ -1,66 +1,46 @@
 coffee = require 'coffeescript'
 path = require 'path'
 
+findComponent = require './findComponent'
+
 loadGame = ({
   srcDir, gameFile, env, fs = require('fs'), load = (->{})
   config = {}
 })->
+  {existsSync} = fs
+
   gameComponents = {}
   scenes = {}
 
   componentsConstructors = {}
   componentsRequires = []
 
+  partName = null
+
   loadComponentConstructor = (name)->
-    return if componentsConstructors[name]?
+    return true if componentsConstructors[name]?
 
-    if (relPath = config.components?[name])?
-      pathTo = path.join (srcDir + '../'), relPath
+    srcDirs = [srcDir].concat(config.externals ? [])
+    component = findComponent srcDirs, name, existsSync
 
-      index = relPath.lastIndexOf '/'
-      nameFile = relPath[(index + 1)..]
+    if component?
+      {pathToServer, pathToClient} = component
+      if pathToServer?
+        component.constructor = load pathToServer
+
+      if pathToClient?
+        relPath = path.relative srcDir, pathToClient
+        reqPath = if relPath[0] is '.' then relPath else "./#{relPath}"
+        componentsRequires.push "  #{name}: require '#{reqPath}'"
     else
-      [pathTo, nameFile] = findComponentDir name
+      return null
 
-    pathToServer = "#{pathTo}/server/#{nameFile}"
-    if findComponent pathToServer
-      componentConstructor = load pathToServer
-
-      if not findComponent "#{pathTo}/client/#{nameFile}"
-        componentConstructor.isServerOnly = true
-    else if findComponent "#{pathTo}/client/#{nameFile}"
-      componentConstructor = isClientOnly: true
-    else
-      throw new Error "Component '#{name}' not found."
-
-    if not componentConstructor.isServerOnly
-      relPath = path.relative srcDir, pathTo
-      reqPath = if relPath[0] is '.' then relPath else "./#{relPath}"
-      reqLine = "  #{name}: require '#{reqPath}/client/#{nameFile}'"
-      componentsRequires.push reqLine
-
-    componentsConstructors[name] = componentConstructor
-
-  findComponent = (path)->
-    return fs.existsSync(path + '.coffee') or fs.existsSync(path + '.js')
-
-  findComponentDir = (name)->
-    pathName = name.replace /(?!^)_/g, '/'
-
-    pathTo = "#{srcDir}#{pathName}"
-
-    index = pathName.lastIndexOf '/'
-    nameFile = if index is -1 then pathName else pathName[(index + 1)..]
-
-    [pathTo, nameFile]
+    componentsConstructors[name] = component
 
   content = fs.readFileSync srcDir + gameFile + '.coffee', encoding: 'utf8'
 
   loadGameComponents = (componentsInfo)->
-    for name, value of componentsInfo
-      loadComponentConstructor name
-      gameComponents[name] = value
-    return
+    loadComponents componentsInfo, gameComponents
 
   scene = (id, sceneComponents)->
     sceneID = id
@@ -68,14 +48,29 @@ loadGame = ({
     if scenes[sceneID]?
       throw new Error "Duplicated scene id = #{sceneID}"
 
-    for name, value of sceneComponents
-      loadComponentConstructor name
+    loadComponents sceneComponents, (scenes[sceneID] = {})
 
-    scenes[sceneID] = sceneComponents
+  loadComponents = (componentsInfo, whereToStore)->
+    for name, value of componentsInfo
+      if loadComponentConstructor name
+        whereToStore[name] = value
+      else if partName? and loadComponentConstructor "#{partName}_#{name}"
+        whereToStore["#{partName}_#{name}"] = value
+      else
+        throw new Error "Component '#{name}' not found."
+
+    return
 
   loadConfig = (configData)->
     for key, value of configData
       config[key] = value
+
+    if (externals = config.externals)?
+      if typeof externals is 'string'
+        externals = config.externals = [externals]
+      for p, i in externals
+        externals[i] = path.join(srcDir + '../', p) + '/'
+
     return
 
   sandbox =
@@ -83,6 +78,7 @@ loadGame = ({
     config: loadConfig
     components: loadGameComponents
     scene: scene
+    part: (p)-> partName = p
 
   coffee.eval content, {sandbox}
 

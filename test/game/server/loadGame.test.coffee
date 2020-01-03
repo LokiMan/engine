@@ -42,10 +42,8 @@ scene 'first',
 
     expect(result.scenes).to.eql {
       first:
-#        components:
         cmp1: true
         cmp2: {}
-#        dir: ''
     }
     
   it 'should throw on duplicate scene', ->
@@ -58,29 +56,48 @@ scene 'first',
 """
     expect(fn).to.throw 'Duplicated scene'
 
-  it 'should read nested components', ->
-    existsSpy = spy -> false
-
-    try
-      readGame 'components nested_moreNested_component: true', existsSpy
-
-    expect(existsSpy.calls).to.eql [
-      ['nested/moreNested/component/server/component.coffee']
-      ['nested/moreNested/component/server/component.js']
-      ['nested/moreNested/component/client/component.coffee']
-      ['nested/moreNested/component/client/component.js']
-    ]
-
   it 'should use full path of external components', ->
     fakeFS =
       readFileSync: -> """
-config {components: ext: '../extProject/src/sub/comp'}
+config {externals: ['../extProject/src']}
 components {ext: true}"""
-      existsSync: spy -> true
+      existsSync: spy (p)-> p.includes 'extProject'
 
-    loadGame {srcDir: '', fs: fakeFS}
+    loadGame {srcDir: '/games/game1/src/', fs: fakeFS}
+
+    expect(fakeFS.existsSync.calls[4...6]).to.eql [
+      ['/games/extProject/src/ext/server/ext.coffee']
+      ['/games/extProject/src/ext/client/ext.coffee']
+    ]
+    
+  it 'should load part components', ->
+    fakeFS =
+      readFileSync: -> """
+part 'root'
+components {ext: true}"""
+      existsSync: spy (p)-> p.includes 'root'
+
+    loadGame {srcDir: '/', fs: fakeFS}
 
     expect(fakeFS.existsSync.calls).to.eql [
-      ['../../extProject/src/sub/comp/server/comp.coffee']
-      ['../../extProject/src/sub/comp/client/comp.coffee']
+      ['/ext/server/ext.coffee']
+      ['/ext/server/ext.js']
+      ['/ext/client/ext.coffee']
+      ['/ext/client/ext.js']
+      ['/root/ext/server/ext.coffee']
+      ['/root/ext/client/ext.coffee']
+    ]
+
+  it "should convert 'externals' to array if it's a string", ->
+    fakeFS =
+      readFileSync: -> """
+config {externals: '../extProject/src'}
+components {ext: true}"""
+      existsSync: spy (p)-> p.includes 'extProject'
+
+    loadGame {srcDir: '/games/game1/src/', fs: fakeFS}
+
+    expect(fakeFS.existsSync.calls[4...6]).to.eql [
+      ['/games/extProject/src/ext/server/ext.coffee']
+      ['/games/extProject/src/ext/client/ext.coffee']
     ]
