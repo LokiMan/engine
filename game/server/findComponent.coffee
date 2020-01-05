@@ -3,7 +3,7 @@ FindComponent = (srcDirs, name, existsSync = require('fs').existsSync)->
     return existsSync(path + '.coffee') or existsSync(path + '.js')
 
   index = name.lastIndexOf '_'
-  if index isnt -1
+  if index > 0
     isNested = true
     addPath = name[..index].replace /(?!^)_/g, '/'
     name = name[(index + 1)..]

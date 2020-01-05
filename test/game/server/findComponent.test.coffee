@@ -72,3 +72,13 @@ describe 'Find Component', ->
       pathToServer: '/nested/moreNested/component/server/component'
     }
 
+  it "should not considered as nested if '_' is first symbol", ->
+    existsSync = (path)->
+      return path.includes '/_notNested/server'
+
+    result = findComponent ['/'], '_notNested', existsSync
+
+    expect(result).to.eql {
+      isServerOnly: true
+      pathToServer: '/_notNested/server/_notNested'
+    }
