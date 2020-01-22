@@ -2,11 +2,12 @@ FindComponent = (srcDirs, name, existsSync = require('fs').existsSync)->
   findFile = (path)->
     return existsSync(path + '.coffee') or existsSync(path + '.js')
 
-  index = name.lastIndexOf '_'
-  if index > 0
+  if name.lastIndexOf('_') > 0
     isNested = true
-    addPath = name[..index].replace /(?!^)_/g, '/'
-    name = name[(index + 1)..]
+    replaced = name.replace /(?!^)_+/g, (m)-> '/' + m[1..]
+    index = replaced.lastIndexOf '/'
+    addPath = replaced[..index]
+    name = replaced[(index + 1)..]
   else
     addPath = ''
 

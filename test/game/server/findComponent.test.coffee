@@ -82,3 +82,26 @@ describe 'Find Component', ->
       isServerOnly: true
       pathToServer: '/_notNested/server/_notNested'
     }
+
+  it "should replace only one '_' if several order", ->
+    existsSync = (path)->
+      return path.includes '/nested/_component/server'
+
+    result = findComponent ['/'], 'nested__component', existsSync
+
+    expect(result).to.eql {
+      isServerOnly: true
+      pathToServer: '/nested/_component/server/_component'
+    }
+
+  it "should work with nested components and first with '_'", ->
+    existsSync = (path)->
+      return path.includes '/_nested/component/server'
+
+    result = findComponent ['/'], '_nested_component', existsSync
+
+    expect(result).to.eql {
+      isServerOnly: true
+      pathToServer: '/_nested/component/server/component'
+    }
+
