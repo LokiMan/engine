@@ -25,11 +25,13 @@ EngineParts = ({
       message = packFor command
       for player from players
         connections.get(player)?.send message
+      return
 
     broadcastOnline: (command...)->
       message = packFor command
       for connection from connections.values()
         connection.send message
+      return
 
     deSync: (player, args...)->
       msg = "deSync(#{player.id}, #{player.scene.id}.#{componentName}):"
