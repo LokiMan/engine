@@ -1,7 +1,7 @@
-spy = require '../../../common/test_helpers/spy'
+spy = require '../../../../common/test_helpers/spy'
 
 describe 'Raf', ->
-  Raf = require '../../../game/client/animate/raf'
+  Raf = require '../../../../game/client/animate/raf'
 
   it 'should use window.requestAnimationFrame if exists', ->
     window = requestAnimationFrame: spy()

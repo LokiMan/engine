@@ -1,9 +1,9 @@
-FakeTimers = require '../../../common/test_helpers/fakeTimers'
-spy = require '../../../common/test_helpers/spy'
+FakeTimers = require '../../../../common/test_helpers/fakeTimers'
+spy = require '../../../../common/test_helpers/spy'
 
 describe 'Animate', ->
-  Animate = require '../../../game/client/animate/animate'
-  lerp = require '../../../common/math/lerp'
+  Animate = require '../../../../game/client/animate/animate'
+  lerp = require '../../../../common/math/lerp'
 
   timers = undefined
   animate = undefined
