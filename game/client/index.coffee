@@ -56,8 +56,8 @@ Game = (componentsConstructors)->
     initComponents gui, componentsConstructors, gameComponents, componentsInfo,
       Engine, console
 
-    updateScene = UpdateScene componentsConstructors, scene, sceneContainer,
-      animate, Engine
+    updateScene = UpdateScene gui, componentsConstructors, scene,
+      sceneContainer, animate, Engine, console
 
     updateScene sceneInfo
 

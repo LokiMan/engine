@@ -1,4 +1,6 @@
-UpdateScene = (componentsConstructors, scene, sceneContainer, animate, Engine)->
+UpdateScene = (
+  {div}, componentsConstructors, scene, sceneContainer, animate, Engine, logger
+)->
   componentsContainers = {}
 
   updateComponent = (name, value)->
@@ -29,7 +31,7 @@ UpdateScene = (componentsConstructors, scene, sceneContainer, animate, Engine)->
     for [name, value] in components
       componentsObj[name] = value
 
-    console.info 'scene:', componentsObj
+    logger.info 'scene:', componentsObj
 
     for name, component of scene
       if not componentsObj[name]?
