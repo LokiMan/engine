@@ -71,3 +71,9 @@ describe 'Deep clone', ->
     a = cloneDeep obj, functions: yes
 
     expect(Object.keys(a.d)).to.include 'e'
+
+  it 'should use empty Object() if no constructor in obj', ->
+    object = Object.create null
+    fn = ->
+      cloneDeep object
+    expect(fn).to.not.throw()
