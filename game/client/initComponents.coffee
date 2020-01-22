@@ -1,4 +1,4 @@
-initComponents = (constructors, components, info, Engine)->
+initComponents = ({div}, constructors, components, info, Engine, logger)->
   createComponent = (name, value)->
     constructor = constructors[name]
 
@@ -14,7 +14,8 @@ initComponents = (constructors, components, info, Engine)->
 
     components[name] = component
 
-  console.info 'game:', info.reduce ((res, [name, value])-> res[name] = value; res), {}
+  asObject = info.reduce ((res, [name, value])-> res[name] = value; res), {}
+  logger.info 'game:', asObject
 
   for [name, value] in info
     createComponent name, value

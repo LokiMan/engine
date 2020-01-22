@@ -53,8 +53,8 @@ Game = (componentsConstructors)->
   }
 
   init = ([componentsInfo, sceneInfo])->
-    initComponents componentsConstructors, gameComponents, componentsInfo,
-      Engine
+    initComponents gui, componentsConstructors, gameComponents, componentsInfo,
+      Engine, console
 
     updateScene = UpdateScene componentsConstructors, scene, sceneContainer,
       animate, Engine
