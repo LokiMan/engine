@@ -1,9 +1,9 @@
-FakeTimers = require '../../../common/test_helpers/fakeTimers'
-spy = require '../../../common/test_helpers/spy'
+FakeTimers = require '../../../../common/test_helpers/fakeTimers'
+spy = require '../../../../common/test_helpers/spy'
 
 describe 'Animate', ->
-  Animate = require '../../../game/client/animate/index'
-  lerp = require '../../../common/math/lerp'
+  Animate = require '../../../../game/client/animate/animate'
+  lerp = require '../../../../common/math/lerp'
 
   timers = undefined
   animate = undefined
@@ -16,10 +16,11 @@ describe 'Animate', ->
         timers.wait 16, callback
     }
 
-    animate = Animate timers, fakeRaf
+    animate = Animate fakeRaf, timers.now, timers.interval
 
   it 'should call tick each frame', ->
-    animate duration: 100, tick: tick = spy()
+    tick = spy()
+    animate {duration: 100, tick}
 
     timers.tick 48
 
@@ -51,9 +52,10 @@ describe 'Animate', ->
         timer.clear()
     }
 
-    animate = Animate timers, fakeRaf
+    animate = Animate fakeRaf, timers.now, timers.interval
 
-    animate duration: 100, tick: tick = spy()
+    tick = spy()
+    animate {duration: 100, tick}
 
     timers.tick 1000
 
@@ -67,9 +69,10 @@ describe 'Animate', ->
         timers.wait +Infinity, callback
     }
 
-    animate = Animate timers, fakeRaf
+    animate = Animate fakeRaf, timers.now, timers.interval
 
-    animate duration: 2000, tick: tick = spy()
+    tick = spy()
+    animate {duration: 2000, tick}
 
     timers.tick 1000
 
@@ -91,13 +94,49 @@ describe 'Animate', ->
 
       timers.tick 16
 
-      expect(obj.tick.calls[0][0].length).to.equal 2
+      expect(obj.tick.calls[0][0]).to.have.lengthOf 2
 
-  describe.skip 'stop', ->
+  describe 'stop', ->
+    it 'should remove animate on stop', ->
+      tick = spy()
+      animation = animate {duration: 100, tick}
+      timers.tick 16
+
+      animation.stop()
+      timers.tick 16
+
+      expect(tick.calls).to.have.lengthOf 1
+
     it 'should call finish from stopped animation', ->
       finish = spy()
-      animate {duration: 100, finish, tick: -> @stop()}
+      animation = animate 100, finish
 
+      timers.tick 16
+      animation.stop()
       timers.tick 16
 
       expect(finish.calls).to.not.empty
+
+    it 'should not call finish from break animation', ->
+      finish = spy()
+      animation = animate 100, finish
+
+      timers.tick 16
+      animation.break()
+      timers.tick 16
+
+      expect(finish.calls).to.be.empty
+
+  describe 'removeBy', ->
+    it 'should remove animations by component name', ->
+      finish = spy()
+      animate {duration: 100, finish}
+      animate {duration: 100}, finish, 'name1'
+      animate 100, finish
+      animate 100, finish, 'name1'
+      animate.fromTo {duration: 100, finish}, 'name1'
+
+      animate.removeBy 'name1'
+      timers.tick 112
+
+      expect(finish.calls).to.have.lengthOf 2

@@ -1,20 +1,36 @@
 constructGame = (gameComponents, scenes, componentsConstructors, Engine)->
-  createComponent = (name, value)->
-    componentConstructor = componentsConstructors[name]
+  # game components
+  createGameComponent = (name, value)->
+    component = componentsConstructors[name]
 
-    return if componentConstructor.isClientOnly
+    return if component.isClientOnly
       toClient: -> value
     else
-      componentConstructor value, (Engine name)
+      component.constructor value, (Engine name)
 
   for name, value of gameComponents
-    gameComponents[name] = createComponent name, value
+    gameComponents[name] = createGameComponent name, value
+
+
+  #scenes components
+  sceneComponentsConstructors = {}
+
+  createSceneComponent = (name, value)->
+    if not (constructor = sceneComponentsConstructors[name])?
+      component = componentsConstructors[name]
+      constructor = if component.isClientOnly
+        -> toClient: -> value
+      else
+        component.constructor (Engine name)
+      sceneComponentsConstructors[name] = constructor
+
+    constructor value
 
   constructScene = (id, scene)->
     toClient = []
 
     for name, value of scene
-      component = createComponent name, value
+      component = createSceneComponent name, value
       scene[name] = component
       if not componentsConstructors[name].isServerOnly
         toClient.push [name, component]

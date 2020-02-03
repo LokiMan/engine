@@ -1,6 +1,10 @@
 describe 'Dates', ->
   dates = require '../../common/dates'
 
+  it 'should create formatted string', ->
+    result = dates.formatYMDHMS dates.fromString '10/10/10 2:3:1'
+    expect(result).to.equal '2010-10-10 02:03:01'
+
   describe 'parseDuration', ->
     it "should parse 'seconds'", ->
       result = dates.parseDuration '17 seconds'

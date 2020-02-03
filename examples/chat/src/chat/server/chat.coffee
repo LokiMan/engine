@@ -4,7 +4,7 @@
 # cron - для периодического запуска задач
 # Список всех объектов, передаваемых в компоненты можно найти
 # в файле: game/server/constructGame.coffee
-Chat = (room, {broadcast, logger, cron})->
+Chat = ({broadcast, logger, cron})-> (room)->
   players = []
 
   toClient = ->

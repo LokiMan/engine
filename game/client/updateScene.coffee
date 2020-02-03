@@ -1,6 +1,5 @@
 UpdateScene = (
-  componentsConstructors, scene, remote, sceneContainer, gameComponents,
-  animate, gui
+  {div}, componentsConstructors, scene, sceneContainer, animate, Engine, logger
 )->
   componentsContainers = {}
 
@@ -11,13 +10,8 @@ UpdateScene = (
       if (container = componentsContainers[name])?
         container.remove()
 
-      arg = {
-        gameComponents...
-        components: gameComponents
-        scene
-        gui
-        remote: remote.makeFor name
-      }
+      arg = Engine name
+
       componentConstructor = componentsConstructors[name]
 
       if componentConstructor.skipContainer
@@ -33,17 +27,16 @@ UpdateScene = (
       scene[name] = component
 
   (components)->
-    animate.clearAll()
-
     componentsObj = {}
     for [name, value] in components
       componentsObj[name] = value
 
-    console.info 'scene:', componentsObj
+    logger.info 'scene:', componentsObj
 
     for name, component of scene
       if not componentsObj[name]?
-        scene[name].removeComponent?()
+        component.removeComponent?()
+        animate.removeBy name
         delete scene[name]
         if (container = componentsContainers[name])?
           container.remove()

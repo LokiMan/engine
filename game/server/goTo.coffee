@@ -1,4 +1,6 @@
-GoTo = (storage, scenes, startScene, components, remotes, logger, collection)->
+GoTo = (
+  storage, scenes, startScene, components, connections, logger, collection
+)->
   {callSceneComponents, sceneToClient} = components
 
   onPlayer = (player)->
@@ -29,10 +31,10 @@ GoTo = (storage, scenes, startScene, components, remotes, logger, collection)->
 
       callSceneComponents player, 'enter', fromScene
 
-      remote = remotes.get player
-      if remote?
+      connection = connections.get player
+      if connection?
         sceneData = sceneToClient player, fromScene
-        remote 'updateScene', sceneData
+        connection.send JSON.stringify ['updateScene', sceneData]
 
   {onPlayer}
 

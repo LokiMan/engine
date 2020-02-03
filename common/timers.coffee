@@ -1,20 +1,5 @@
-dates = require './dates'
-
-w = if (typeof window isnt 'undefined' and window.document?)
-  window
-else
-  global
-
-perf = w.performance
-if perf and (perfNow = (perf.now or perf.webkitNow))?
-  now = perfNow.bind perf
-else
-  now = dates.now
-
-Timers =
-  now: now
-
-  wait: (ms, func)->
+Timers = (w)->
+  wait = (ms, func)->
     timer = w.setTimeout func, ms
 
     clear = ->
@@ -29,7 +14,7 @@ Timers =
 
     return {clear, reStart}
 
-  interval: (ms, func)->
+  interval = (ms, func)->
     timer = w.setInterval func, ms
 
     clear = ->
@@ -43,5 +28,7 @@ Timers =
       timer = w.setInterval func, newMS
 
     return {clear, reStart}
+
+  {wait, interval}
 
 module.exports = Timers

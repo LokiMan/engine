@@ -17,7 +17,7 @@ initStorage = (gameDir, gameData, NODE_ENV)->
     Storage = require '../../storage/storage'
     Storage gameData ? {}
   else
-    FilePersist = require '../../persist/file/persist'
-    FilePersist dataDir
+    FilePersist = require '../../persist/file'
+    FilePersist dataDir, fs
 
 module.exports = initStorage

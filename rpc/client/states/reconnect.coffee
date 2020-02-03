@@ -1,6 +1,3 @@
-emptyFunction = require '../../../common/emptyFunction'
-rand = require '../../../common/rand'
-
 RECONNECTION_DELAY = 1000
 #@ifndef DEVELOPMENT
 RECONNECTION_DELAY_MAX = 5000
@@ -11,49 +8,13 @@ RECONNECTION_DELAY_MAX = 1000
 RANDOMIZATION_FACTOR = 0.5
 COEF = RECONNECTION_DELAY * RANDOMIZATION_FACTOR
 
-modalPane = (next)->
-  div style:
-    zIndex: 150
-    position: 'fixed'
-    left: 0
-    top: 0
-    width: '100%'
-    height: '100%'
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
-  , ->
-    div
-      style:
-        position: 'relative'
-        width: '202px'
-        top: '50%'
-        padding: '20px'
-        margin: '0 auto'
-        backgroundColor: 'white'
-        color: 'black'
-        transform: 'translateY(-50%)'
-    , next
-
-ReconnectFactory = (ajax, {wait})->
+ReconnectFactory = (ajax, wait, rand, w, toEmpty, uiPanes)->
   disconnected = false
 
-  Reconnect = (connection)->
+  Reconnect = ->
     return if disconnected
 
-    connection.send = emptyFunction
-
-    wait 100, ->
-      modalPane ->
-        span text: 'Соединение с сервером'
-
-        text = ''
-        dotsSpan = span {text}
-
-        setInterval ->
-          text += '.'
-          if text is '....'
-            text = ''
-          dotsSpan.update {text}
-        , 500
+    wait 100, uiPanes.reconnect
 
     currentTimeout = 0
 
@@ -65,26 +26,20 @@ ReconnectFactory = (ajax, {wait})->
 
       wait currentTimeout, ->
         ajax.head '/', ->
-          window.location.reload()
+          w.location.reload()
         , reconnect
 
     reconnect()
 
-  Reconnect.disconnect = (connection)->
+    return toEmpty()
+
+  Reconnect.disconnect = ->
     disconnected = true
 
-    connection.send = emptyFunction
+    uiPanes.disconnect ->
+      w.location.reload()
 
-    modalPane (parent)->
-      parent.update
-        pos: width: 270
-        style: textAlign: 'center'
-
-      span text: 'Соединение с сервером потеряно'
-      br()
-      br()
-      link text: 'Обновить', click: ->
-        window.location.reload()
+    return toEmpty()
 
   return Reconnect
 

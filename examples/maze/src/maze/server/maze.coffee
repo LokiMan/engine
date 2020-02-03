@@ -2,7 +2,7 @@ ViewPart = require '../lib/viewPart'
 Generator = require './generator'
 MazePos = require './mazePos'
 
-Maze = ([width, height], {storage, cron, remote})->
+Maze = ({storage, cron, remote})-> ([width, height])->
   repository = storage.Repository 'mazePos', MazePos
 
   maze = storage.get ['maze']

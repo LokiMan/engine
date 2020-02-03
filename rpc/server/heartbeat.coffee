@@ -1,18 +1,16 @@
-{interval} = require '../../common/timers'
-{formatYMDHMS} = require '../../common/dates'
+HEARTBEAT_TIME = 30000
 
-heartbeat = (wss)->
+Heartbeat = (wss, interval)->
   noop = (->)
 
   heartbeat = ->
     @isAlive = true
-    @isAliveTime = formatYMDHMS()
 
   wss.on 'connection', (ws)->
     ws.isAlive = true
     ws.on 'pong', heartbeat
 
-  return interval 30000, ->
+  return interval HEARTBEAT_TIME, ->
     wss.clients.forEach (ws)->
       if ws.isAlive
         ws.isAlive = false
@@ -20,4 +18,4 @@ heartbeat = (wss)->
       else
         ws.terminate()
 
-module.exports = heartbeat
+module.exports = Heartbeat

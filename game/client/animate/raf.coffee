@@ -1,7 +1,4 @@
-Raf = (
-  w = window
-  timers = require '../../../common/timers'
-)->
+Raf = (now, wait, w = window)->
   rAF = w.requestAnimationFrame
   cAF = w.cancelAnimationFrame
   for vendor in ['ms', 'moz', 'webkit', 'o'] when not rAF
@@ -21,8 +18,8 @@ Raf = (
     targetTime = 0
     raf = {
       request: (callback)->
-        targetTime = Math.max targetTime + 16, currentTime = timers.now()
-        timers.wait targetTime - currentTime, callback
+        targetTime = Math.max targetTime + 16, currentTime = now()
+        wait targetTime - currentTime, callback
 
       cancel: (timer)->
         timer.clear()

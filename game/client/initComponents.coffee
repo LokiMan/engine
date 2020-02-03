@@ -1,14 +1,8 @@
-initComponents = (constructors, components, remote, info, scene, gui)->
+initComponents = ({div}, constructors, components, info, Engine, logger)->
   createComponent = (name, value)->
     constructor = constructors[name]
 
-    arg = {
-      components...
-      components
-      scene
-      gui
-      remote: remote.makeFor name
-    }
+    arg = Engine name
 
     if constructor.skipContainer
       component = constructor value, arg
@@ -20,7 +14,8 @@ initComponents = (constructors, components, remote, info, scene, gui)->
 
     components[name] = component
 
-  console.info 'game:', info.reduce ((res, [name, value])-> res[name] = value; res), {}
+  asObject = info.reduce ((res, [name, value])-> res[name] = value; res), {}
+  logger.info 'game:', asObject
 
   for [name, value] in info
     createComponent name, value

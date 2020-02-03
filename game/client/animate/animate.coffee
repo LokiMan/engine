@@ -1,18 +1,20 @@
 lerp = require '../../../common/math/lerp'
 
-TICK_MS_IN_PAUSE = 50
-
-Animate = (
-  timers = require '../../../common/timers'
-  raf = (require './raf') window, timers
-)->
+Animate = (raf, now, interval)->
   activeAnimations = []
   lastTime = 0
 
   intervalTimer = undefined
   requestID = undefined
 
-  wantToStop = []
+  wantToStop = [] #[[animation, needFinish]]
+
+  stop = -> # need call finish before removing animation
+    wantToStop.push [this, true]
+
+  #$ - need because 'break' is a keyword
+  break$ = -> # not need call finish before removing animation
+    wantToStop.push [this, false]
 
   update = (currentTime)->
     if wantToStop.length > 0
@@ -41,14 +43,8 @@ Animate = (
 
     null
 
-  stop = ->
-    wantToStop.push [this, true]
-
-  _break = ->
-    wantToStop.push [this, false]
-
   requestUpdate = ->
-    currentTime = timers.now()
+    currentTime = now()
     lastTime = currentTime
 
     update currentTime
@@ -58,15 +54,15 @@ Animate = (
     else
       intervalTimer.clear()
 
-  animate = (duration, finish)->
-    now = timers.now()
+  animate = (duration, finish, componentName)->
+    startTime = now()
 
     if activeAnimations.length == 0
-      lastTime = now
+      lastTime = startTime
       requestID = raf.request requestUpdate
 
-      intervalTimer = timers.interval 1000, ->
-        currentTime = timers.now()
+      intervalTimer = interval 1000, ->
+        currentTime = now()
         elapsedTime = currentTime - lastTime
         if elapsedTime > 500
           update currentTime
@@ -81,14 +77,17 @@ Animate = (
       tick = ->
 
     animateObj = {
-      duration, startTime: now, tick, finish, stop, break: _break
+      duration, startTime, tick, finish, stop, break: break$
+      componentName
     }
 
     activeAnimations.push animateObj
 
     return animateObj
 
-  animate.fromTo = ({duration, from, to, tick: originalTick, finish})->
+  animate.fromTo = (
+    {duration, from, to, tick: originalTick, finish}, componentName
+  )->
     if Array.isArray from
       tick = (t)->
         originalTick (lerp(from[i], e, t) for e, i in to)
@@ -96,13 +95,13 @@ Animate = (
       tick = (t)->
         originalTick lerp from, to, t
 
-    animate {duration, tick, finish}
+    animate {duration, tick, finish}, undefined, componentName
 
-  animate.clearAll = ->
-    activeAnimations.length = 0
-    intervalTimer?.clear()
-    if requestID?
-      raf.cancel requestID
+  animate.removeBy = (componentName)->
+    for anim in activeAnimations
+      if anim.componentName is componentName
+        anim.break()
+    return
 
   return animate
 
