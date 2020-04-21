@@ -22,3 +22,6 @@ module.exports = (element, value, guiElement)->
         width: rect.width
         height: rect.height
       }
+
+    guiElement.getBoundingClientRect = ->
+      element.getBoundingClientRect()
