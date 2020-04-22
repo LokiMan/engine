@@ -1,9 +1,9 @@
 FakeTimers = require '../../../../common/test_helpers/fakeTimers'
 spy = require '../../../../common/test_helpers/spy'
+lerp = require '../../../../common/math/lerp'
 
 describe 'Animate', ->
   Animate = require '../../../../game/client/animate/animate'
-  lerp = require '../../../../common/math/lerp'
 
   timers = undefined
   animate = undefined
@@ -32,6 +32,15 @@ describe 'Animate', ->
     timers.tick Math.ceil(100 / 16) * 16
 
     expect(finish.calls.length).to.equal 1
+
+  it "should be 'thenable'", (done)->
+    fn = ->
+      await animate 100
+      done()
+
+    fn()
+    setImmediate ->
+      timers.tick Math.ceil(100 / 16) * 16
 
   it 'should work with object as arg', ->
     obj = {duration: 100, tick: spy()}
