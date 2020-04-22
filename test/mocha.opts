@@ -1,6 +1,0 @@
---timeout 1000
---reporter spec
---recursive
---require coffeescript/register
---require test/init.coffee
-test/**/*.coffee
