@@ -1,4 +1,5 @@
 lerp = require '../../../common/math/lerp'
+appendMethod = require '../../../common/appendMethod'
 
 Animate = (raf, now, interval)->
   activeAnimations = []
@@ -21,7 +22,6 @@ Animate = (raf, now, interval)->
       for [animation, needFinish] in wantToStop
         if needFinish
           animation.finish?()
-          animation.resolve?()
         activeAnimations.splice (activeAnimations.indexOf animation), 1
       wantToStop.length = 0
 
@@ -34,7 +34,6 @@ Animate = (raf, now, interval)->
       if leftTime <= 0
         animation.tick? 0
         animation.finish?()
-        animation.resolve?()
 
         activeAnimations.splice i, 1
         --cnt
@@ -82,7 +81,7 @@ Animate = (raf, now, interval)->
       duration, startTime, tick, finish, stop, break: break$
       componentName
       then: (resolve)->
-        @resolve = resolve
+        appendMethod this, 'finish', resolve
     }
 
     activeAnimations.push animateObj
