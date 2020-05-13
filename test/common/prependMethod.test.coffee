@@ -1,6 +1,6 @@
 spy = require '../../common/test_helpers/spy'
 
-describe 'Append Function', ->
+describe 'Prepend method', ->
   prependMethod = require '../../common/prependMethod'
 
   it 'should call previous function', ->
@@ -11,7 +11,7 @@ describe 'Append Function', ->
     obj.func 1, 2
 
     expect(prev.calls).to.eql [[1, 2]]
-    
+
   it 'should return prev function', ->
     prev = (->)
     obj = func: prev

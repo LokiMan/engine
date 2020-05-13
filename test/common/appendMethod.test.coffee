@@ -1,6 +1,6 @@
 spy = require '../../common/test_helpers/spy'
 
-describe 'Append Function', ->
+describe 'Append method', ->
   appendMethod = require '../../common/appendMethod'
 
   it 'should call previous function', ->
@@ -11,7 +11,7 @@ describe 'Append Function', ->
     obj.func 1, 2
 
     expect(prev.calls).to.eql [[1, 2]]
-    
+
   it 'should call new function with result of prev', ->
     obj = func: -> 3
     appendMethod obj, 'func', newFunc = spy()
@@ -19,7 +19,7 @@ describe 'Append Function', ->
     obj.func 1, 2
 
     expect(newFunc.calls).to.eql [[1, 2, 3]]
-    
+
   it 'should return prev function', ->
     prev = (->)
     obj = func: prev
@@ -36,7 +36,7 @@ describe 'Append Function', ->
       obj.func 1, 2
 
     expect(fn).to.not.throw()
-    
+
   it 'should call append result array as array', ->
     obj = func: -> [3, 4]
     appendMethod obj, 'func', newFunc = spy()
@@ -54,4 +54,3 @@ describe 'Append Function', ->
     result = obj.func.call newObj
 
     expect(result).to.eql newObj
-    
