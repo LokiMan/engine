@@ -45,7 +45,7 @@ scene 'first',
         cmp1: true
         cmp2: {}
     }
-    
+
   it 'should throw on duplicate scene', ->
     fn = ->
       readGame """
@@ -69,7 +69,7 @@ components {ext: true}"""
       ['/games/extProject/src/ext/server/ext.coffee']
       ['/games/extProject/src/ext/client/ext.coffee']
     ]
-    
+
   it 'should load part components', ->
     fakeFS =
       readFileSync: -> """
