@@ -5,10 +5,11 @@ DevReload = ->
   {
     engineDir, entryPort, gameFile, corePort, requiresSource
     cron, server, webSocketServer, router, hb, logger, config, startCore
+    componentsConstructors
   } = CoreStarter()
 
   devServer = DevServer engineDir, {
-    entryPort, gameFile, corePort, requiresSource
+    entryPort, gameFile, corePort, requiresSource, componentsConstructors
   }, ->
     cron.clear()
 
@@ -20,7 +21,10 @@ DevReload = ->
 
     {
       requiresSource, components, players, router, hb, logger
+      componentsConstructors
     } = startCore()
+
+    devServer.setComponentsConstructors componentsConstructors
 
     prevCall = components.callSceneComponents
     components.callSceneComponents = (player, functionName, args...)->

@@ -7,10 +7,11 @@ chokidar = require 'chokidar'
 ws = require 'ws'
 
 Development = require './packer/development'
+findComponent = require './utils/findComponent'
 
 DevServer = (
   engineDir
-  {entryPort, gameFile, corePort, requiresSource}
+  {entryPort, gameFile, corePort, requiresSource, componentsConstructors}
   reStartGame
 )->
   gameDir = process.cwd()
@@ -26,6 +27,9 @@ DevServer = (
   needGameReload = false
 
   serverInError = ''
+
+  setComponentsConstructors = (cc)->
+    componentsConstructors = cc
 
   setEntry = (source)->
     packers.game.setEntry 'game', srcDir, source
@@ -63,14 +67,16 @@ DevServer = (
         return if length < 3 # at least name/type/name
 
         if ['server', 'lib'].some (p)-> pathParts.includes p
-          componentPath = path.join srcDir, findComponentName pathParts
-          for name in Object.keys require.cache
-            if name.startsWith componentPath
-              delete require.cache[name]
+          componentPathName = findComponent pathParts, componentsConstructors
+          if componentPathName
+            componentPath = path.join srcDir, componentPathName
+            for name in Object.keys require.cache
+              if name.startsWith componentPath
+                delete require.cache[name]
 
-          found = true
-          needGameReload = true
-          {clients} = wss
+            found = true
+            needGameReload = true
+            {clients} = wss
 
         if ['client', 'lib'].some (p)-> pathParts.includes p
           for name, packer of packers
@@ -96,17 +102,6 @@ DevServer = (
 
         for client in clients
           client.send 'reload'
-
-  findComponentName = (pathParts)->
-    paths = [pathParts[0]]
-    index = 1
-    loop
-      next = pathParts[index]
-      if not next? or next in ['client', 'lib', 'server']
-        break
-      paths.push next
-      index++
-    return paths.join '/'
 
   stOptions =
     path: path.join gameDir, './res'
@@ -202,6 +197,6 @@ DevServer = (
 </html>
 """
 
-  {add}
+  {add, setComponentsConstructors}
 
 module.exports = DevServer

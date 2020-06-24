@@ -122,12 +122,12 @@ CoreStarter = (getGamePagesHash = (-> null))->
 
     {
       webSocketServer, requiresSource, components, players, router, hb, logger
-      connections, config, refreshGamePagesHash
+      connections, config, refreshGamePagesHash, componentsConstructors
     }
 
   {
     webSocketServer, requiresSource, router, hb, logger, connections, config
-    refreshGamePagesHash
+    refreshGamePagesHash, componentsConstructors
   } = startCore()
 
   gameName = (_ref = gameDir.split('/'))[_ref.length - 1]
@@ -147,7 +147,7 @@ CoreStarter = (getGamePagesHash = (-> null))->
   {
     engineDir, gameDir, entryPort, gameFile, corePort, requiresSource
     cron, server, webSocketServer, router, hb, logger, config, reconnectAll
-    refreshGamePagesHash
+    refreshGamePagesHash, componentsConstructors
     startCore
   }
 
