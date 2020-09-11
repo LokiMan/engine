@@ -4,16 +4,11 @@ path = require 'path'
 findComponent = require './findComponent'
 
 loadGame = ({
-  srcDir, gameFile, env, fs = require('fs'), load = (->{})
-  config = {}
+  srcDir, gameFile, env, fs = require('fs'), load = (->{}), config = {}
+  gameComponents = {}, scenes = {},
+  componentsConstructors = {}, componentsRequires = []
 })->
   {existsSync} = fs
-
-  gameComponents = {}
-  scenes = {}
-
-  componentsConstructors = {}
-  componentsRequires = []
 
   partName = null
 
@@ -79,6 +74,12 @@ loadGame = ({
     components: loadGameComponents
     scene: scene
     part: (p)-> partName = p.replace /\//g, '_'
+    include: (pathTo)->
+      loadGame {
+        srcDir, gameFile: pathTo, env, fs, load, config
+        gameComponents, scenes
+        componentsConstructors, componentsRequires
+      }
 
   coffee.eval content, {sandbox}
 

@@ -121,3 +121,31 @@ components {ext: true}"""
       ['/games/extProject/src/ext/server/ext.coffee']
       ['/games/extProject/src/ext/client/ext.coffee']
     ]
+
+  it 'should load components from "include" files', ->
+    fakeFS =
+      readFileSync: (fileName)->
+        switch fileName
+          when 'main.coffee' then "include 'quest1/main'"
+          when 'quest1/main.coffee'
+            '''
+components
+  first: true
+
+scene 'q1',
+  cmp1: true
+  cmp2: {}
+'''
+      existsSync: (-> true)
+
+    result = loadGame srcDir: '', gameFile: 'main', fs: fakeFS
+
+    expect(result.gameComponents).to.eql {
+      first: true
+    }
+
+    expect(result.scenes).to.eql {
+      q1:
+        cmp1: true
+        cmp2: {}
+    }
