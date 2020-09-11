@@ -1,22 +1,23 @@
 coffee = require 'coffeescript'
 path = require 'path'
+vm = require 'vm'
 
 findComponent = require './findComponent'
 
 loadGame = ({
   srcDir, gameFile, env, fs = require('fs'), load = (->{}), config = {}
-  gameComponents = {}, scenes = {},
-  componentsConstructors = {}, componentsRequires = []
 })->
-  {existsSync} = fs
-
+  gameComponents = {}
+  scenes = {}
+  componentsConstructors = {}
+  componentsRequires = []
   partName = null
 
   loadComponentConstructor = (name)->
     return true if componentsConstructors[name]?
 
     srcDirs = [srcDir].concat(config.externals ? [])
-    component = findComponent srcDirs, name, existsSync
+    component = findComponent srcDirs, name, fs.existsSync
 
     if component?
       {pathToServer, pathToClient} = component
@@ -31,8 +32,6 @@ loadGame = ({
       return null
 
     componentsConstructors[name] = component
-
-  content = fs.readFileSync srcDir + gameFile + '.coffee', encoding: 'utf8'
 
   loadGameComponents = (componentsInfo)->
     loadComponents componentsInfo, gameComponents
@@ -68,20 +67,18 @@ loadGame = ({
 
     return
 
-  sandbox =
+  sandbox = vm.createContext
     env: env
     config: loadConfig
     components: loadGameComponents
     scene: scene
     part: (p)-> partName = p.replace /\//g, '_'
     include: (pathTo)->
-      loadGame {
-        srcDir, gameFile: pathTo, env, fs, load, config
-        gameComponents, scenes
-        componentsConstructors, componentsRequires
-      }
+      storedPartName = partName
+      _loadFile srcDir, pathTo, fs, sandbox
+      partName = storedPartName
 
-  coffee.eval content, {sandbox}
+  _loadFile srcDir, gameFile, fs, sandbox
 
   requiresSource = """
 (require 'game/client/index') {
@@ -90,5 +87,9 @@ loadGame = ({
 """
 
   return {gameComponents, scenes, componentsConstructors, requiresSource}
+
+_loadFile = (srcDir, gameFile, fs, sandbox)->
+  content = fs.readFileSync srcDir + gameFile + '.coffee', encoding: 'utf8'
+  coffee.eval content, {sandbox}
 
 module.exports = loadGame

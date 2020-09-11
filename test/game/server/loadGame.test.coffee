@@ -149,3 +149,48 @@ scene 'q1',
         cmp1: true
         cmp2: {}
     }
+
+  it 'should restore part after "include"', ->
+    fakeFS =
+      readFileSync: (fileName)->
+        switch fileName
+          when 'main.coffee'
+            """
+part 'root'
+include 'quest'
+components
+  r1: 1
+"""
+          when 'quest.coffee'
+            '''
+part 'q1'
+components
+  first: true
+'''
+      existsSync: ((p)-> ['root', 'q1'].some (c)-> p.includes c)
+
+    result = loadGame srcDir: '', gameFile: 'main', fs: fakeFS
+
+    expect(result.gameComponents).to.eql {
+      root_r1: 1
+      q1_first: true
+    }
+
+  it 'should can transport global variables to includes', ->
+    fakeFS =
+      readFileSync: (fileName)->
+        switch fileName
+          when 'main.coffee'
+            """
+global.room = (id)-> scene id, r1: []
+include 'quest1/main'
+"""
+          when 'quest1/main.coffee' then "room 'q1'"
+      existsSync: (-> true)
+
+    result = loadGame srcDir: '', gameFile: 'main', fs: fakeFS
+
+    expect(result.scenes).to.eql {
+      q1:
+        r1: []
+    }
