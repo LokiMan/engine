@@ -88,6 +88,26 @@ components {ext: true}"""
       ['/root/ext/client/ext.coffee']
     ]
 
+  it 'should load nested part components', ->
+    fakeFS =
+      readFileSync: -> """
+part 'root/sub/sub2'
+components {ext: true}"""
+      existsSync: spy (p)-> p.includes 'root/sub'
+
+    result = loadGame {srcDir: '/', fs: fakeFS}
+
+    expect(fakeFS.existsSync.calls).to.eql [
+      ['/ext/server/ext.coffee']
+      ['/ext/server/ext.js']
+      ['/ext/client/ext.coffee']
+      ['/ext/client/ext.js']
+      ['/root/sub/sub2/ext/server/ext.coffee']
+      ['/root/sub/sub2/ext/client/ext.coffee']
+    ]
+
+    expect(result.gameComponents).to.eql {root_sub_sub2_ext: true}
+
   it "should convert 'externals' to array if it's a string", ->
     fakeFS =
       readFileSync: -> """

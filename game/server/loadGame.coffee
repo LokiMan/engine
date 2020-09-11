@@ -78,7 +78,7 @@ loadGame = ({
     config: loadConfig
     components: loadGameComponents
     scene: scene
-    part: (p)-> partName = p
+    part: (p)-> partName = p.replace /\//g, '_'
 
   coffee.eval content, {sandbox}
 
