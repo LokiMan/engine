@@ -5,12 +5,12 @@ DevReload = ->
   {
     engineDir, entryPort, gameFile, corePort, requiresSource
     cron, server, webSocketServer, router, hb, logger, config, startCore
-    componentsConstructors
+    componentsConstructors, includes
   } = CoreStarter()
 
   devServer = DevServer engineDir, {
     entryPort, gameFile, corePort, requiresSource, componentsConstructors
-  }, ->
+  }, includes, ->
     cron.clear()
 
     process.removeListener 'uncaughtException', logger.exception
@@ -21,10 +21,11 @@ DevReload = ->
 
     {
       requiresSource, components, players, router, hb, logger
-      componentsConstructors
+      componentsConstructors, includes
     } = startCore()
 
     devServer.setComponentsConstructors componentsConstructors
+    devServer.setIncludes includes
 
     prevCall = components.callSceneComponents
     components.callSceneComponents = (player, functionName, args...)->

@@ -12,7 +12,7 @@ findComponent = require './utils/findComponent'
 DevServer = (
   engineDir
   {entryPort, gameFile, corePort, requiresSource, componentsConstructors}
-  reStartGame
+  includes, reStartGame
 )->
   gameDir = process.cwd()
 
@@ -30,6 +30,9 @@ DevServer = (
 
   setComponentsConstructors = (cc)->
     componentsConstructors = cc
+
+  setIncludes = (inc)->
+    includes = inc
 
   setEntry = (source)->
     packers.game.setEntry 'game', srcDir, source
@@ -56,7 +59,7 @@ DevServer = (
 
       pathName = filePath[... -ext.length]
 
-      if pathName is gameFile
+      if pathName is gameFile or includes.includes pathName
         found = true
         needGameReload = true
         {clients} = packers.game
@@ -197,6 +200,6 @@ DevServer = (
 </html>
 """
 
-  {add, setComponentsConstructors}
+  {add, setComponentsConstructors, setIncludes}
 
 module.exports = DevServer

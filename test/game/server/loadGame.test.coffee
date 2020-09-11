@@ -194,3 +194,25 @@ include 'quest1/main'
       q1:
         r1: []
     }
+
+  it 'should return all included files', ->
+    fakeFS =
+      readFileSync: (fileName)->
+        switch fileName
+          when 'main.coffee' then "include 'quest1/main'"
+          when 'quest1/main.coffee' then """
+include 'quest2/mainFile'
+include 'quest3/q'
+"""
+          when 'quest2/mainFile.coffee' then "include 'quest2_2/f'"
+          when 'quest2_2/f.coffee' then ''
+          when 'quest3/q.coffee' then ''
+
+    result = loadGame srcDir: '', gameFile: 'main', fs: fakeFS
+
+    expect(result.includes).to.eql [
+      'quest1/main'
+      'quest2/mainFile'
+      'quest2_2/f'
+      'quest3/q'
+    ]

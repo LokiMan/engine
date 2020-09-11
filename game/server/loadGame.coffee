@@ -11,6 +11,7 @@ loadGame = ({
   scenes = {}
   componentsConstructors = {}
   componentsRequires = []
+  includes = []
   partName = null
 
   loadComponentConstructor = (name)->
@@ -74,6 +75,7 @@ loadGame = ({
     scene: scene
     part: (p)-> partName = p.replace /\//g, '_'
     include: (pathTo)->
+      includes.push pathTo
       storedPartName = partName
       _loadFile srcDir, pathTo, fs, sandbox
       partName = storedPartName
@@ -86,7 +88,9 @@ loadGame = ({
 }
 """
 
-  return {gameComponents, scenes, componentsConstructors, requiresSource}
+  return {
+    gameComponents, scenes, componentsConstructors, requiresSource, includes
+  }
 
 _loadFile = (srcDir, gameFile, fs, sandbox)->
   content = fs.readFileSync srcDir + gameFile + '.coffee', encoding: 'utf8'

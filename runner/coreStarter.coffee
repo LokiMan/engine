@@ -71,7 +71,7 @@ CoreStarter = (getGamePagesHash = (-> null))->
       startScene: 'start'
 
     {
-      gameComponents, scenes, componentsConstructors, requiresSource
+      gameComponents, scenes, componentsConstructors, requiresSource, includes
     } = loadGame {srcDir, gameFile, load: require, env: NODE_ENV, config}
 
     if not storage? or config.gameData?
@@ -122,12 +122,13 @@ CoreStarter = (getGamePagesHash = (-> null))->
 
     {
       webSocketServer, requiresSource, components, players, router, hb, logger
-      connections, config, refreshGamePagesHash, componentsConstructors
+      connections, config, refreshGamePagesHash, componentsConstructors,
+      includes
     }
 
   {
     webSocketServer, requiresSource, router, hb, logger, connections, config
-    refreshGamePagesHash, componentsConstructors
+    refreshGamePagesHash, componentsConstructors, includes
   } = startCore()
 
   gameName = (_ref = gameDir.split('/'))[_ref.length - 1]
@@ -147,7 +148,7 @@ CoreStarter = (getGamePagesHash = (-> null))->
   {
     engineDir, gameDir, entryPort, gameFile, corePort, requiresSource
     cron, server, webSocketServer, router, hb, logger, config, reconnectAll
-    refreshGamePagesHash, componentsConstructors
+    refreshGamePagesHash, componentsConstructors, includes
     startCore
   }
 
