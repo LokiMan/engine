@@ -11,7 +11,8 @@ CreateElementFactory = (GuiElement, document = window.document)->
     if props?
       guiElement.update props
 
-    GuiElement._appendToCurrent domElement
+    if props?.autoAppend isnt false
+      GuiElement._appendToCurrent domElement
 
     if next?
       guiElement.append next

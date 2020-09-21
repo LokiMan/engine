@@ -46,3 +46,15 @@ describe 'CreateElement Factory', ->
     createElement 'div'
 
     expect(GuiElement._appendToCurrent.calls[0][0]).to.equal element
+
+  it 'should skip append to current if set autoAppend: false', ->
+    element = {}
+
+    GuiElement = -> {update: ->}
+    GuiElement._appendToCurrent = spy()
+
+    createElement = CreateElementFactory GuiElement, {createElement: -> element}
+
+    createElement 'div', autoAppend: false
+
+    expect(GuiElement._appendToCurrent.calls).to.be.empty
