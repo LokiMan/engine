@@ -17,10 +17,18 @@ describe 'findComponent', ->
 
     expect(result).to.equal 'battles/_buttons'
 
-  it 'should return null if can not found component', ->
+  it 'should return null if cannot found component', ->
     pathParts = 'battles/component/server/component'.split '/'
     componentsConstructors = {}
 
     result = findComponent pathParts, componentsConstructors
 
     expect(result).to.be.null
+
+  it 'should find mostly deeper nested component', ->
+    pathParts = 'battles/mechanics/damage/server/damage'.split '/'
+    componentsConstructors = battles: {}, battles_mechanics: {}
+
+    result = findComponent pathParts, componentsConstructors
+
+    expect(result).to.equal 'battles/mechanics'

@@ -1,11 +1,13 @@
 findComponent = (pathParts, componentsConstructors)->
-  paths = []
+  paths = [pathParts...]
 
-  for path in pathParts
-    paths.push path
-
+  loop
     if paths.join('_') of componentsConstructors
       return paths.join '/'
+
+    paths.pop()
+
+    break if paths.length is 0
 
   return null
 
