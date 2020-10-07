@@ -11,6 +11,7 @@ Rpc = (
   gui
   ajax
   {wait, interval}
+  now
   rand
   onCommand
   w = window
@@ -34,6 +35,17 @@ Rpc = (
   PollingState = State Polling unpackAndRun, ajax, ReconnectState, Disconnect
 
   TryingWebSocket wait, w, WebSocketState, PollingState
+
+  # check on 'sleeping' time - when comp was wake up after sleep
+  lastTimeCheck = now()
+
+  checkTimer = interval 1000, ->
+    checkTime = now()
+    if checkTime - lastTimeCheck > 20000
+      Disconnect()
+      checkTimer.clear()
+    else
+      lastTimeCheck = checkTime
 
   (message)->
     currentState.send message

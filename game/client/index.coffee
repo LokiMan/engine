@@ -37,7 +37,7 @@ Game = (componentsConstructors)->
   localStorage = LocalStorage()
   ajax = Ajax()
 
-  send = Rpc gui, ajax, timers, rand, (target, action, args)->
+  send = Rpc gui, ajax, timers, now, rand, (target, action, args)->
     f = scene[target]?[action] ? gameComponents[target]?[action] ? _game[action]
     f? args...
 

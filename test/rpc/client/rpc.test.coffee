@@ -32,8 +32,8 @@ describe 'Client Rpc', ->
     rand = (->)
 
   describe 'Connecting', ->
-    createRpc = (_w = w)->
-      Rpc gui, ajax, fakeTimers, rand, onCommand, _w
+    createRpc = (_w = w, now = ->)->
+      Rpc gui, ajax, fakeTimers, now, rand, onCommand, _w
 
     createWebSocket = ->
       send = createRpc()
@@ -63,7 +63,7 @@ describe 'Client Rpc', ->
 
     expectConnectWebSocket = ->
       expect(socket.onmessage).to.be.a 'function'
-    
+
     it 'should connect as polling if no WebSocket in window', ->
       delete w.WebSocket
 
@@ -92,14 +92,14 @@ describe 'Client Rpc', ->
       fakeTimers.tick 3000
 
       expectConnectPolling()
-      
+
     it 'should connect as polling if socket.onerror()', ->
       createRpc()
 
       socket.onerror()
 
       expectConnectPolling()
-      
+
     it 'should connect as polling if socket.onclose()', ->
       createRpc()
 
@@ -175,12 +175,15 @@ describe 'Client Rpc', ->
         ]
 
     describe 'Disconnect', ->
+      checkSwitchToDisconnect = ->
+        expect(gui.span.calls).to.eql [[text: 'Соединение с сервером потеряно']]
+
       it "should switch to disconnect from ws on receive 'disconnect'", ->
         createWebSocket()
 
         socket.onmessage data: 'disconnect'
 
-        expect(gui.span.calls).to.eql [[text: 'Соединение с сервером потеряно']]
+        checkSwitchToDisconnect()
 
       it 'should not send messages on disconnected websocket', ->
         socket.send = spy()
@@ -198,7 +201,7 @@ describe 'Client Rpc', ->
 
         success 'disconnect'
 
-        expect(gui.span.calls).to.eql [[text: 'Соединение с сервером потеряно']]
+        checkSwitchToDisconnect()
 
       it 'should not send messages on disconnected polling', ->
         ajax.post = spy()
@@ -223,6 +226,36 @@ describe 'Client Rpc', ->
         linkClick()
 
         expect(w.location.reload.calls).to.have.lengthOf 1
+
+      it 'should disconnect if take a lot of time between intervals', ->
+        dates = [0, 30000]
+        now = -> dates.shift()
+        createRpc w, now
+
+        fakeTimers.tickByStep 1000, 500
+
+        checkSwitchToDisconnect()
+
+      it 'should not second time disconnect on repeat check', ->
+        dates = [0, 30000, 30000]
+        now = ->dates.shift()
+        createRpc w, now
+
+        fakeTimers.tickByStep 1000, 500
+        fakeTimers.tickByStep 1000, 500
+
+        checkSwitchToDisconnect()
+
+      it 'should correct work on multiple calls', ->
+        dates = [0, 10000, 20000, 30000]
+        now = ->dates.shift()
+        createRpc w, now
+
+        fakeTimers.tickByStep 1000, 500
+        fakeTimers.tickByStep 1000, 500
+        fakeTimers.tickByStep 1000, 500
+
+        expect(gui.span.calls).to.be.empty
 
     describe 'Reconnect', ->
       it "should switch to reconnect from ws on 'reconnect', after 100 ms", ->
@@ -291,11 +324,11 @@ describe 'Client Rpc', ->
         rand = -> 10
         {success} = createPolling()
         success 'reconnect'
-        
+
         fakeTimers.tick 10
-        
+
         expect(ajax.head.calls[0][0]).to.equal '/'
-        
+
       it 'should reload location on success reconnect', ->
         w.location.reload = spy()
         rand = -> 1
@@ -307,7 +340,7 @@ describe 'Client Rpc', ->
         fakeTimers.tick 1
 
         onSuccess()
-        
+
         expect(w.location.reload.calls).to.have.lengthOf 1
 
       it 'should increase time between trying but not more 1000 msec', ->
@@ -319,10 +352,8 @@ describe 'Client Rpc', ->
         createWebSocket()
         socket.onmessage data: 'reconnect'
 
-        fakeTimers.tick 5000
+        fakeTimers.tickByStep 5000, 100
 
         expect(waitSpy.calls[2..]).to.eql [
           [200], [400], [600], [800], [1000], [1000], [1000], [1000]
         ]
-        
-
