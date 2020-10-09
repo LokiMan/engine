@@ -58,3 +58,14 @@ describe 'CreateElement Factory', ->
     createElement 'div', autoAppend: false
 
     expect(GuiElement._appendToCurrent.calls).to.be.empty
+
+  it 'should append element if send as second argument', ->
+    append = spy()
+    GuiElement = -> {append}
+    GuiElement._appendToCurrent = ->
+    createElement = CreateElementFactory GuiElement, {createElement: ->}
+    guiElement = {append: ->}
+
+    createElement 'div', guiElement
+
+    expect(append.calls[0][0]).to.equal guiElement

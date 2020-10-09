@@ -1,6 +1,6 @@
 CreateElementFactory = (GuiElement, document = window.document)->
   createElement = (tag, props, next)->
-    if not next? and typeof props is 'function'
+    if not next? and (typeof props is 'function' or props?.append?)
       next = props
       props = null
 
