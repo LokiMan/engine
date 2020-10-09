@@ -1,6 +1,5 @@
 spy = require '../../../common/test_helpers/spy'
 FakeTimers = require '../../../common/test_helpers/fakeTimers'
-appendMethod = require '../../../common/appendMethod'
 
 describe 'Player Connection', ->
   PlayerConnection = require '../../../rpc/server/playerConnection'

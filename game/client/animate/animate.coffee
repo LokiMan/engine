@@ -1,5 +1,5 @@
 lerp = require '../../../common/math/lerp'
-appendMethod = require '../../../common/appendMethod'
+{append} = require '../../../common/appendPrepend'
 
 Animate = (raf, now, interval)->
   activeAnimations = []
@@ -81,7 +81,7 @@ Animate = (raf, now, interval)->
       duration, startTime, tick, finish, stop, break: break$
       componentName
       then: (resolve)->
-        appendMethod this, 'finish', resolve
+        append this, 'finish', resolve
     }
 
     activeAnimations.push animateObj

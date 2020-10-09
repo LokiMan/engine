@@ -1,4 +1,4 @@
-appendMethod = require '../../common/appendMethod'
+{append} = require '../../common/appendPrepend'
 
 SceneContainer = (scene, gameComponents)->
   sceneContainer = div
@@ -8,7 +8,7 @@ SceneContainer = (scene, gameComponents)->
       overflowX: 'hidden'
       overflowY: 'auto'
 
-  appendMethod sceneContainer, 'update', (props)->
+  append sceneContainer, 'update', (props)->
     return if not props.pos?
 
     height = props.pos['height'] ? props.pos[3]

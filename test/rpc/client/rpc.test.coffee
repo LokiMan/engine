@@ -1,6 +1,6 @@
 FakeTimers = require '../../../common/test_helpers/fakeTimers'
 spy = require '../../../common/test_helpers/spy'
-prependMethod = require '../../../common/prependMethod'
+{prepend} = require '../../../common/appendPrepend'
 
 describe 'Client Rpc', ->
   Rpc = require '../../../rpc/client'
@@ -348,7 +348,7 @@ describe 'Client Rpc', ->
         gui.span = -> update: (->)
         ajax.head = (_, s, f)-> f()
         waitSpy = spy()
-        prependMethod fakeTimers, 'wait', (time)-> waitSpy time
+        prepend fakeTimers, 'wait', (time)-> waitSpy time
         createWebSocket()
         socket.onmessage data: 'reconnect'
 
