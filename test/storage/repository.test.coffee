@@ -76,13 +76,13 @@ describe 'Repository', ->
 
       expect(storage.set.calls).to.eql [[['data', 'uid1'], {}]]
 
-    it 'should add toClient that return data', ->
+    it 'should add getRawData that return data', ->
       data = {a: 1, b: [2, 3]}
       storage = {has: (-> {}), set: -> data}
       repository = createRepository {collection: 'data', storage}
       object = repository.add 'uid1', data
 
-      result = object.toClient()
+      result = object.getRawData()
 
       expect(result).to.equal data
 

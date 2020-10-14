@@ -23,7 +23,7 @@ RepositoryFactory = (storage, onChange, Observer)-> (collection, Class)->
 
     object = Class observableData, uid
 
-    object.toClient = ->
+    object.getRawData = ->
       return data
 
     return object
