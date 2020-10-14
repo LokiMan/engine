@@ -1,10 +1,10 @@
 UID_EXPIRES_3_YEARS = 1000 * 60 * 60 * 24 * 365 * 3
 
 UIDGenerator = (
-  playersCollection, router, GamePage, dates, RandomString
+  playersCollection, router, GamePage, dates, uuidFor
   {cookieName = 'uid', expires = UID_EXPIRES_3_YEARS} = {}
 )->
-  randomString = RandomString playersCollection
+  randomString = uuidFor playersCollection
 
   indexPage = GamePage {}
 

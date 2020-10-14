@@ -4,6 +4,7 @@ http = require 'http'
 ws = require 'ws'
 
 rand = require '../common/rand'
+RandServerPart = require './utils/rand'
 dates = require '../common/dates'
 Timers = require '../common/timers'
 
@@ -48,6 +49,8 @@ CoreStarter = (getGamePagesHash = (-> null))->
   server = http.createServer()
   webSocketServer = new ws.Server {server}
 
+  RandServerPart rand
+
   timers = Timers global
   {wait, interval} = timers
 
@@ -87,7 +90,7 @@ CoreStarter = (getGamePagesHash = (-> null))->
 
     playersCollection = storage.getRef [PLAYER_SCENES_COLLECTION_NAME]
     auth = UIDGenerator playersCollection, router, GamePage, dates,
-      rand.RandomString, config.uidGenerator
+      rand.uuidFor, config.uidGenerator
 
     connections = new Map
 
@@ -109,7 +112,7 @@ CoreStarter = (getGamePagesHash = (-> null))->
     connectPlayer = PlayerConnection obtainPlayer, components, connections, wait
 
     ConnectWebSocket webSocketServer, connectPlayer
-    ConnectPolling router, connectPlayer, wait, rand.RandomString
+    ConnectPolling router, connectPlayer, wait, rand.uuidFor
 
     hb = heartbeat webSocketServer, interval
 

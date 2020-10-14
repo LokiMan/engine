@@ -11,9 +11,9 @@ describe 'Polling server', ->
 
   createPolling = ({
     router = {get: {}, post: {}}, onConnect = (->)
-    RandomString = (-> -> '1234567890')
+    uuidFor = (-> -> '1234567890')
   } = {})->
-    Polling router, onConnect, fakeTimers.wait, RandomString
+    Polling router, onConnect, fakeTimers.wait, uuidFor
     {router}
 
   connectPolling = ->
@@ -43,13 +43,13 @@ describe 'Polling server', ->
     return res
 
   describe '/connect', ->
-    it 'should use randomString for generate cid', ->
-      randomString = spy()
-      {router} = createPolling {RandomString: (-> randomString)}
+    it 'should use uuid for generate cid', ->
+      uuid = spy()
+      {router} = createPolling {uuidFor: (-> uuid)}
 
       router.get['/connection/connect'] {}, createRes()
 
-      expect(randomString.calls).to.not.empty
+      expect(uuid.calls).to.not.empty
 
     it 'should res end on connection.close()', ->
       connection = null

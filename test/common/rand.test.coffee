@@ -1,22 +1,6 @@
 describe 'rand', ->
   rand = require '../../common/rand'
 
-  describe 'Random String', ->
-    {RandomString} = rand
-  
-    it 'should check exists item', ->
-      chars = 'abcdefghijklmnopqrstuvwxyz0123456789_ABCDEFGHIJKLMNOPQRSTUVWXY'
-      charsMax = chars.length
-      collection = {}
-      for i in [0...charsMax]
-        collection[chars[i]] = true
-
-      randomString = RandomString collection
-
-      id2 = randomString 1
-  
-      expect(id2).to.equal 'Z'
-
   describe 'fromArray', ->
     it 'should return value if count is 1', ->
       array = [1, 2, 3]

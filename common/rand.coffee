@@ -25,32 +25,4 @@ rand.shuffle = (array)->
     array[i] = t
   array
 
-chars = 'abcdefghijklmnopqrstuvwxyz0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-charsMax = chars.length - 1
-
-staticArrays =
-  10: new Array 10
-  20: new Array 20
-
-rand.string = (length)->
-  if not (charArray = staticArrays[length])?
-    charArray = staticArrays[length] = new Array length
-
-  for i in [0...length]
-    charArray[i] = chars[rand(0, charsMax)]
-
-  str = charArray.join ''
-
-  return str
-
-rand.RandomString = (collection)->
-  (length)->
-    loop
-      str = rand.string length
-
-      #защита, от случайного создания уже существующей записи
-      break if not collection[str]?
-
-    return str
-
 module.exports = rand

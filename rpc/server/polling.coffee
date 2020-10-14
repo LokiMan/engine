@@ -1,10 +1,10 @@
 DISCONNECT_TIME = 5000
 REFRESH_TIME = 25000
 
-Polling = (router, onConnect, wait, RandomString)->
+Polling = (router, onConnect, wait, uuidFor)->
   pollings = Object.create null
 
-  randomString = RandomString pollings
+  randomString = uuidFor pollings
 
   _toBuffered = ({connection, buffer})->
     connection.send = (message)->
