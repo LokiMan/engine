@@ -43,12 +43,17 @@ describe 'Construct Game', ->
 
   it 'should return value on toClient if is client only', ->
     value = {a: 1}
-    scenes = scene1: {name: value}
-    constructorSpy = {isClientOnly: true}
+    value2 = {b: 2}
+    scenes =
+      scene1: {name: value}
+      scene2: {name: value2}
 
-    constructGame {}, scenes, {name: constructorSpy}
+    constructGame {}, scenes,
+      name: {isClientOnly: true}
+      name2: {isClientOnly: true}
 
     expect(scenes.scene1.name.toClient()).to.equal value
+    expect(scenes.scene2.name.toClient()).to.equal value2
 
   it 'should push to toClient only not is server only components', ->
     scenes = scene1: {name1: 1, name2: 2, name3: 3}

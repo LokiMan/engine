@@ -15,11 +15,13 @@ constructGame = (gameComponents, scenes, componentsConstructors, Engine)->
   #scenes components
   sceneComponentsConstructors = {}
 
+  clientOnlyConstructor = (v)-> toClient: -> v
+
   createSceneComponent = (name, value)->
     if not (constructor = sceneComponentsConstructors[name])?
       component = componentsConstructors[name]
       constructor = if component.isClientOnly
-        -> toClient: -> value
+        clientOnlyConstructor
       else
         component.constructor (Engine name)
       sceneComponentsConstructors[name] = constructor
