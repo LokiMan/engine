@@ -1,9 +1,4 @@
-# Путь к папке engine/ автоматически добавляется к глобальному поиску модулей
-dates = require 'common/dates'
-
-Time = (serverTime, {container})->
-  container.remove() #unused div
-
+Time = (serverTime, {common: {dates}})->
   st = Math.round(dates.nowDate().getTime() / 1000 - 0.5)
 
   getTime = ->
@@ -16,5 +11,8 @@ Time = (serverTime, {container})->
     return {h, m, s}
 
   {getTime}
+
+# Этот компонент не нужно добавлять в рендеринг страницы
+Time.skipContainer = true
 
 module.exports = Time

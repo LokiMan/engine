@@ -1,4 +1,4 @@
-Cell = (pos, type)->
+Cell = ({img})-> (pos, type)->
   image = if type is 0 then 'floor_1' else 'wall_1'
 
   img

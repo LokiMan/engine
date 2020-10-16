@@ -1,4 +1,4 @@
-Arrow = (remote)-> ([x, y], name)->
+Arrow = ({img}, remote)-> ([x, y], name)->
   img
     src: "arrow_#{name}.png"
     pos: [x, y, 128, 128]

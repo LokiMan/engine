@@ -1,10 +1,8 @@
-rand = require 'common/rand'
-
 CELL = 0
 WALL = 1
 VISITED = 2
 
-Generator = (width, height)->
+Generator = (rand, width, height)->
   maze = new Array height
 
   for i in [0...height]

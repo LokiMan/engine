@@ -2,13 +2,13 @@ ViewPart = require '../lib/viewPart'
 Generator = require './generator'
 MazePos = require './mazePos'
 
-Maze = ({storage, cron, remote})-> ([width, height])->
+Maze = ({storage, cron, remote, common: {rand}})-> ([width, height])->
   repository = storage.Repository 'mazePos', MazePos
 
   maze = storage.get ['maze']
 
   if not maze?
-    [cells] = Generator width, height
+    [cells] = Generator rand, width, height
     maze = {cells}
     storage.set ['maze'], maze
 

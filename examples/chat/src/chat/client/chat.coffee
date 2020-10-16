@@ -1,9 +1,9 @@
 # Путь к папке engine/ автоматически добавляется к глобальному поиску модулей
 pad = require 'common/pad'
 
-Chat = (room, {remote, components})->
-  # компонент 'time' используется для получения на клиенте серверного времени
-  {time} = components
+# компонент 'time' используется для получения на клиенте серверного времени
+Chat = (_, {gui, remote, time})->
+  {div, textBox} = gui
 
   messagesDiv = div
     pos: top: 30, height: 500, width: '100%'

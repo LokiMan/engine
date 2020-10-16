@@ -1,18 +1,21 @@
 ViewPart = require '../lib/viewPart'
-Cell = require './cell'
+CellFactory = require './cell'
 ArrowFactory = require './arrow'
 
 CELL_WIDTH = 100
 CELL_HEIGHT = CELL_WIDTH * (3 / 4)
 
 Maze = (cells, {container, remote, gui})->
-  left = (gui.gameContainer.pos.width - CELL_WIDTH * ViewPart.WIDTH) / 2
+  {gameContainer, div} = gui
+
+  left = (gameContainer.pos.width - CELL_WIDTH * ViewPart.WIDTH) / 2
   top = 80
   container.update pos: [left, top]
 
   mazeDiv = div()
 
-  Arrow = ArrowFactory remote
+  Arrow = ArrowFactory gui, remote
+  Cell = CellFactory gui
 
   arrows =
     right: Arrow [625, 124], 'right'

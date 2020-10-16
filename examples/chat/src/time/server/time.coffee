@@ -1,7 +1,4 @@
-# Путь к папке engine/ автоматически добавляется к глобальному поиску модулей
-dates = require 'common/dates'
-
-Time = ->
+Time = (_, {common: {dates}})->
   toClient = ->
     now = dates.nowDate()
     now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()

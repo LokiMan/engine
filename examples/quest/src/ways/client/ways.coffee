@@ -1,5 +1,7 @@
 # Значение аргумента ways получено с сервера из метода Ways.toClient()
-Ways = (ways, {remote})->
+Ways = (ways, {gui, remote})->
+  {div, link} = gui
+
   Way = (name, i)->
     div ->
       link html: name, click: ->
