@@ -1,6 +1,6 @@
 {append} = require '../../common/appendPrepend'
 
-SceneContainer = (scene, gameComponents)->
+SceneContainer = ({div}, scene, gameComponents)->
   sceneContainer = div
     id: 'scene'
     pos: [0, 0, '100%', '100%']

@@ -29,7 +29,7 @@ Game = (componentsConstructors)->
   gameContainerGui = gui.GuiElement document.body.firstElementChild
   gui.gameContainer = GameContainer gameContainerGui, gui.isStandalone, timers
 
-  sceneContainer = SceneContainer scene, gameComponents
+  sceneContainer = SceneContainer gui, scene, gameComponents
   gui.sceneContainer = sceneContainer
 
   _game = null
