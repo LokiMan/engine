@@ -4,36 +4,36 @@ RepositoryFactory = (storage, onChange, Observer)-> (collection, Class)->
 
   cache = {}
 
-  get = (uid)->
-    if (object = cache[uid])?
+  get = (key)->
+    if (object = cache[key])?
       return object
 
-    data = storage.getRef [collection, uid]
+    data = storage.getRef [collection, key]
 
     if data?
-      cache[uid] = _create uid, data
+      cache[key] = _create key, data
     else
       return null
 
-  has = (uid)->
-    cache[uid]? or storage.has [collection, uid]
+  has = (key)->
+    cache[key]? or storage.has [collection, key]
 
-  _create = (uid, data)->
-    observableData = Observer data, onChange, [collection, uid]
+  _create = (key, data)->
+    observableData = Observer data, onChange, [collection, key]
 
-    object = Class observableData, uid
+    object = Class observableData, key
 
     object.getRawData = ->
       return data
 
     return object
 
-  add = (uid, data)->
-    cache[uid] = _create uid, (storage.set [collection, uid], data)
+  add = (key, data)->
+    cache[key] = _create key, (storage.set [collection, key], data)
 
-  remove = (uid)->
-    storage.del [collection, uid]
-    delete cache[uid]
+  remove = (key)->
+    storage.del [collection, key]
+    delete cache[key]
 
   {get, add, remove, has}
 
