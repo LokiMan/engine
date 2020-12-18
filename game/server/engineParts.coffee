@@ -27,6 +27,12 @@ EngineParts = ({
         connections.get(player)?.send message
       return
 
+    broadcastExcept: (players, exceptPlayer, command...)->
+      message = packForComponent command
+      for player from players when player isnt exceptPlayer
+        connections.get(player)?.send message
+      return
+
     broadcastOnline: (command...)->
       message = packForComponent command
       for connection from connections.values()
