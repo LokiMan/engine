@@ -27,6 +27,15 @@ describe 'Engine', ->
 
     expect(send.calls).to.eql [[['name1', [2, 'b']]]]
 
+  it 'should skip excepted player on broadcastExcept', ->
+    get = spy()
+    {broadcastExcept} = createEngineParts({get})()
+    players = [{a: 1}, {b: 2}, {c: 3}]
+
+    broadcastExcept players, players[1]
+
+    expect(get.calls).to.eql [[players[0]], [players[2]]]
+
   it 'should call broadcastOnline with name', ->
     send = spy()
     connections = values: -> [{send}]
