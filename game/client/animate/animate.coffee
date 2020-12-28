@@ -20,9 +20,11 @@ Animate = (raf, now, interval)->
   update = (currentTime)->
     if wantToStop.length > 0
       for [animation, needFinish] in wantToStop
-        if needFinish
-          animation.finish?()
-        activeAnimations.splice (activeAnimations.indexOf animation), 1
+        index = activeAnimations.indexOf animation
+        if index >= 0
+          if needFinish
+            animation.finish?()
+          activeAnimations.splice index, 1
       wantToStop.length = 0
 
     cnt = activeAnimations.length
