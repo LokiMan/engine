@@ -94,7 +94,7 @@ describe 'Animate', ->
 
       timers.tick 16
 
-      t = (100 - 16) / 100
+      t = 1 - ((100 - 16) / 100)
       expect(obj.tick.calls[0][0]).to.be.closeTo lerp(0, 10, t), 0.001
 
     it 'should evaluate all values on array', ->
@@ -103,7 +103,11 @@ describe 'Animate', ->
 
       timers.tick 16
 
+      t = 1 - ((100 - 16) / 100)
+
       expect(obj.tick.calls[0][0]).to.have.lengthOf 2
+      expect(obj.tick.calls[0][0][0]).to.be.closeTo lerp(1, 10, t), 0.001
+      expect(obj.tick.calls[0][0][1]).to.be.closeTo lerp(2, 20, t), 0.001
 
   describe 'stop', ->
     it 'should remove animate on stop', ->

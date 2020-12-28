@@ -92,11 +92,15 @@ Animate = (raf, now, interval)->
     {duration, from, to, tick: originalTick, finish}, componentName
   )->
     if Array.isArray from
+      values = new Array from.length
       tick = (t)->
-        originalTick (lerp(from[i], e, t) for e, i in to)
+        tl = 1 - t
+        for v, i in from
+          values[i] = lerp v, to[i], tl
+        originalTick values
     else
       tick = (t)->
-        originalTick lerp from, to, t
+        originalTick lerp from, to, (1 - t)
 
     animate {duration, tick, finish}, undefined, componentName
 
