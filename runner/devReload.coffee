@@ -8,7 +8,7 @@ DevReload = ->
     componentsConstructors, includes
   } = CoreStarter()
 
-  devServer = DevServer engineDir, {
+  devServer = DevServer engineDir, logger, {
     entryPort, gameFile, corePort, requiresSource, componentsConstructors
   }, includes, ->
     cron.clear()

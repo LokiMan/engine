@@ -10,7 +10,7 @@ Development = require './packer/development'
 findComponent = require './utils/findComponent'
 
 DevServer = (
-  engineDir
+  engineDir, logger
   {entryPort, gameFile, corePort, requiresSource, componentsConstructors}
   includes, reStartGame
 )->
@@ -44,7 +44,7 @@ DevServer = (
       setEntry reStartGame()
     catch e
       serverInError = e.stack
-      return console.error e
+      return logger.error e
 
     serverInError = ''
 
@@ -95,13 +95,12 @@ DevServer = (
             catch e
               for client in packer.clients
                 client.send 'Ошибка при сборке клиента:\n' + e
-              console.error e
+              logger.error e
 
       if found
         console.log '\x1Bc' # clear console
 
-        console.log (new Date).toLocaleString(),
-          ": #{gameName} reloaded ========================================="
+        logger.info "#{gameName} reloaded ====================================="
 
         for client in clients
           client.send 'reload'
