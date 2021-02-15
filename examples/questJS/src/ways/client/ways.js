@@ -1,18 +1,16 @@
 // Значение аргумента ways получено с сервера из метода Ways.toClient()
-const Ways = function(ways, {gui, remote}) {
+const Ways = (ways, {gui, remote}) => {
   const {div, link} = gui
 
-  function Way(name, i) {
-    return div(function() {
-      return link({
+  const Way = (name, i) =>
+    div(() =>
+      link({
         html: name,
-        click: function() {
+        click: () => {
           // Отправляем команду на сервер, в функцию ways/$remotes$.way()
-          return remote('way', i)
+          remote('way', i)
         }
-      })
-    })
-  }
+      }))
 
   ways.forEach(Way)
 

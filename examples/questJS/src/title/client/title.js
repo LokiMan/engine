@@ -1,13 +1,6 @@
-const Title = function(text, {gui}) {
-  const {center, div} = gui
-
-  let titleDiv = null
-
-  return center(function() {
-    return titleDiv = div({
-      html: text
-    })
-  })
-}
+const Title = (text, {gui: {center, div}}) =>
+  center(() => div({
+    html: text
+  }))
 
 module.exports = Title

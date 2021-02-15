@@ -1,9 +1,5 @@
-Title = (text, {gui})->
-  {center, div} = gui
-
-  titleDiv = null
-
+Title = (text, {gui: {center, div}})->
   center ->
-    titleDiv = div html: text
+    div html: text
 
 module.exports = Title
