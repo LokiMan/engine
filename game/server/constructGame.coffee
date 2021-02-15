@@ -17,7 +17,7 @@ constructGame = (gameComponents, scenes, componentsConstructors, Engine)->
 
   clientOnlyConstructor = (v)-> toClient: -> v
 
-  createSceneComponent = (name, value)->
+  createSceneComponent = (name, value, sceneId)->
     if not (constructor = sceneComponentsConstructors[name])?
       component = componentsConstructors[name]
       constructor = if component.isClientOnly
@@ -26,13 +26,13 @@ constructGame = (gameComponents, scenes, componentsConstructors, Engine)->
         component.constructor (Engine name)
       sceneComponentsConstructors[name] = constructor
 
-    constructor value
+    constructor value, sceneId
 
   constructScene = (id, scene)->
     toClient = []
 
     for name, value of scene
-      component = createSceneComponent name, value
+      component = createSceneComponent name, value, id
       scene[name] = component
       if not componentsConstructors[name].isServerOnly
         toClient.push [name, component]

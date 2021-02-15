@@ -39,7 +39,7 @@ describe 'Construct Game', ->
     constructGame {}, {scene1: {name: value}},
       {name: constructor: constructorSpy}, Engine
 
-    expect(constructorSpy.calls).to.deep.equal [[enginePart], [value]]
+    expect(constructorSpy.calls).to.deep.equal [[enginePart], [value, 'scene1']]
 
   it 'should return value on toClient if is client only', ->
     value = {a: 1}
@@ -71,3 +71,12 @@ describe 'Construct Game', ->
       ['name1', component1], ['name3', component3]
     ]
 
+  it 'should pass scene id to scene component constructor', ->
+    constructorSpy = spy()
+
+    constructGame {},
+      {scene1: {name: 'value'}},
+      {name: constructor: -> constructorSpy},
+      (->)
+
+    expect(constructorSpy.calls).to.eql [['value', 'scene1']]
