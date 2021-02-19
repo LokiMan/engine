@@ -15,7 +15,7 @@
     "preprocess": "3.1.0",
     "st": "1.2.2",
     "uglify-js": "3.6.0",
-    "ws": "1.1.1"
+    "ws": "1.1.5"
   },
   "private": true
 }
